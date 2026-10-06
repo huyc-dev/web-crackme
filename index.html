@@ -1,1181 +1,902 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>宸宸爱心</title>
-  <style>
-body {
-  background: #000;
-  height: 100vh;
-  overflow: hidden;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRACK.ME // WEB REVERSING LAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04070a;
+  --panel:#0a120dcc;
+  --panel-solid:#0a120d;
+  --line:#16381f;
+  --line-hi:#2a5c33;
+  --ph:#39ff6e;
+  --ph-dim:#1d7a3f;
+  --ph-faint:#0f4a26;
+  --amber:#ffb340;
+  --red:#ff4d4d;
+  --cyan:#4dd8ff;
+  --text:#c8ffd8;
+  --muted:#5d8f70;
+  --font-display:'VT323', 'Courier New', monospace;
+  --font-mono:'Share Tech Mono', 'Courier New', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-mono);
+  font-size:15px;
+  line-height:1.55;
+  overflow-x:hidden;
+}
+::selection{background:var(--ph);color:#000}
+
+/* ---------- ambient layers ---------- */
+#matrix{position:fixed;inset:0;z-index:0;opacity:.14;pointer-events:none}
+.scanlines{position:fixed;inset:0;z-index:3;pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
+  mix-blend-mode:multiply}
+.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%)}
+.flicker{position:fixed;inset:0;z-index:4;pointer-events:none;background:rgba(57,255,110,.02);
+  animation:flick 4s infinite steps(1)}
+@keyframes flick{
+  0%,96%{opacity:0}97%{opacity:.5}98%{opacity:.1}99%{opacity:.6}100%{opacity:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .flicker{display:none}
 }
 
-#ui .love {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -225px 0 0 -225px;
-}
-#ui .love:last-child .love_word {
-  color: red;
-  font-size: 3.5rem;
-  text-shadow: 0 0 10px red;
-}
-#ui .love_word {
-  color: #fff;
-  font-size: 1.4rem;
-  transform: translateY(-100%) rotateZ(-30deg);
-  font-family: 'Dosis', sans-serif;
-  text-shadow: 0 0 10px #ffc800;
-  letter-spacing: 2px;
-}
-#ui .love_horizontal {
-  animation: horizontal 10000ms infinite alternate ease-in-out;
-}
-#ui .love_vertical {
-  animation: vertical 20000ms infinite linear;
-}
-#ui .love:nth-child(1) .love_horizontal {
-  animation-delay: -300ms;
-}
-#ui .love:nth-child(1) .love_vertical {
-  animation-delay: -300ms;
-}
-#ui .love:nth-child(2) .love_horizontal {
-  animation-delay: -600ms;
-}
-#ui .love:nth-child(2) .love_vertical {
-  animation-delay: -600ms;
-}
-#ui .love:nth-child(3) .love_horizontal {
-  animation-delay: -900ms;
-}
-#ui .love:nth-child(3) .love_vertical {
-  animation-delay: -900ms;
-}
-#ui .love:nth-child(4) .love_horizontal {
-  animation-delay: -1200ms;
-}
-#ui .love:nth-child(4) .love_vertical {
-  animation-delay: -1200ms;
-}
-#ui .love:nth-child(5) .love_horizontal {
-  animation-delay: -1500ms;
-}
-#ui .love:nth-child(5) .love_vertical {
-  animation-delay: -1500ms;
-}
-#ui .love:nth-child(6) .love_horizontal {
-  animation-delay: -1800ms;
-}
-#ui .love:nth-child(6) .love_vertical {
-  animation-delay: -1800ms;
-}
-#ui .love:nth-child(7) .love_horizontal {
-  animation-delay: -2100ms;
-}
-#ui .love:nth-child(7) .love_vertical {
-  animation-delay: -2100ms;
-}
-#ui .love:nth-child(8) .love_horizontal {
-  animation-delay: -2400ms;
-}
-#ui .love:nth-child(8) .love_vertical {
-  animation-delay: -2400ms;
-}
-#ui .love:nth-child(9) .love_horizontal {
-  animation-delay: -2700ms;
-}
-#ui .love:nth-child(9) .love_vertical {
-  animation-delay: -2700ms;
-}
-#ui .love:nth-child(10) .love_horizontal {
-  animation-delay: -3000ms;
-}
-#ui .love:nth-child(10) .love_vertical {
-  animation-delay: -3000ms;
-}
-#ui .love:nth-child(11) .love_horizontal {
-  animation-delay: -3300ms;
-}
-#ui .love:nth-child(11) .love_vertical {
-  animation-delay: -3300ms;
-}
-#ui .love:nth-child(12) .love_horizontal {
-  animation-delay: -3600ms;
-}
-#ui .love:nth-child(12) .love_vertical {
-  animation-delay: -3600ms;
-}
-#ui .love:nth-child(13) .love_horizontal {
-  animation-delay: -3900ms;
-}
-#ui .love:nth-child(13) .love_vertical {
-  animation-delay: -3900ms;
-}
-#ui .love:nth-child(14) .love_horizontal {
-  animation-delay: -4200ms;
-}
-#ui .love:nth-child(14) .love_vertical {
-  animation-delay: -4200ms;
-}
-#ui .love:nth-child(15) .love_horizontal {
-  animation-delay: -4500ms;
-}
-#ui .love:nth-child(15) .love_vertical {
-  animation-delay: -4500ms;
-}
-#ui .love:nth-child(16) .love_horizontal {
-  animation-delay: -4800ms;
-}
-#ui .love:nth-child(16) .love_vertical {
-  animation-delay: -4800ms;
-}
-#ui .love:nth-child(17) .love_horizontal {
-  animation-delay: -5100ms;
-}
-#ui .love:nth-child(17) .love_vertical {
-  animation-delay: -5100ms;
-}
-#ui .love:nth-child(18) .love_horizontal {
-  animation-delay: -5400ms;
-}
-#ui .love:nth-child(18) .love_vertical {
-  animation-delay: -5400ms;
-}
-#ui .love:nth-child(19) .love_horizontal {
-  animation-delay: -5700ms;
-}
-#ui .love:nth-child(19) .love_vertical {
-  animation-delay: -5700ms;
-}
-#ui .love:nth-child(20) .love_horizontal {
-  animation-delay: -6000ms;
-}
-#ui .love:nth-child(20) .love_vertical {
-  animation-delay: -6000ms;
-}
-#ui .love:nth-child(21) .love_horizontal {
-  animation-delay: -6300ms;
-}
-#ui .love:nth-child(21) .love_vertical {
-  animation-delay: -6300ms;
-}
-#ui .love:nth-child(22) .love_horizontal {
-  animation-delay: -6600ms;
-}
-#ui .love:nth-child(22) .love_vertical {
-  animation-delay: -6600ms;
-}
-#ui .love:nth-child(23) .love_horizontal {
-  animation-delay: -6900ms;
-}
-#ui .love:nth-child(23) .love_vertical {
-  animation-delay: -6900ms;
-}
-#ui .love:nth-child(24) .love_horizontal {
-  animation-delay: -7200ms;
-}
-#ui .love:nth-child(24) .love_vertical {
-  animation-delay: -7200ms;
-}
-#ui .love:nth-child(25) .love_horizontal {
-  animation-delay: -7500ms;
-}
-#ui .love:nth-child(25) .love_vertical {
-  animation-delay: -7500ms;
-}
-#ui .love:nth-child(26) .love_horizontal {
-  animation-delay: -7800ms;
-}
-#ui .love:nth-child(26) .love_vertical {
-  animation-delay: -7800ms;
-}
-#ui .love:nth-child(27) .love_horizontal {
-  animation-delay: -8100ms;
-}
-#ui .love:nth-child(27) .love_vertical {
-  animation-delay: -8100ms;
-}
-#ui .love:nth-child(28) .love_horizontal {
-  animation-delay: -8400ms;
-}
-#ui .love:nth-child(28) .love_vertical {
-  animation-delay: -8400ms;
-}
-#ui .love:nth-child(29) .love_horizontal {
-  animation-delay: -8700ms;
-}
-#ui .love:nth-child(29) .love_vertical {
-  animation-delay: -8700ms;
-}
-#ui .love:nth-child(30) .love_horizontal {
-  animation-delay: -9000ms;
-}
-#ui .love:nth-child(30) .love_vertical {
-  animation-delay: -9000ms;
-}
-#ui .love:nth-child(31) .love_horizontal {
-  animation-delay: -9300ms;
-}
-#ui .love:nth-child(31) .love_vertical {
-  animation-delay: -9300ms;
-}
-#ui .love:nth-child(32) .love_horizontal {
-  animation-delay: -9600ms;
-}
-#ui .love:nth-child(32) .love_vertical {
-  animation-delay: -9600ms;
-}
-#ui .love:nth-child(33) .love_horizontal {
-  animation-delay: -9900ms;
-}
-#ui .love:nth-child(33) .love_vertical {
-  animation-delay: -9900ms;
-}
-#ui .love:nth-child(34) .love_horizontal {
-  animation-delay: -10200ms;
-}
-#ui .love:nth-child(34) .love_vertical {
-  animation-delay: -10200ms;
-}
-#ui .love:nth-child(35) .love_horizontal {
-  animation-delay: -10500ms;
-}
-#ui .love:nth-child(35) .love_vertical {
-  animation-delay: -10500ms;
-}
-#ui .love:nth-child(36) .love_horizontal {
-  animation-delay: -10800ms;
-}
-#ui .love:nth-child(36) .love_vertical {
-  animation-delay: -10800ms;
-}
-#ui .love:nth-child(37) .love_horizontal {
-  animation-delay: -11100ms;
-}
-#ui .love:nth-child(37) .love_vertical {
-  animation-delay: -11100ms;
-}
-#ui .love:nth-child(38) .love_horizontal {
-  animation-delay: -11400ms;
-}
-#ui .love:nth-child(38) .love_vertical {
-  animation-delay: -11400ms;
-}
-#ui .love:nth-child(39) .love_horizontal {
-  animation-delay: -11700ms;
-}
-#ui .love:nth-child(39) .love_vertical {
-  animation-delay: -11700ms;
-}
-#ui .love:nth-child(40) .love_horizontal {
-  animation-delay: -12000ms;
-}
-#ui .love:nth-child(40) .love_vertical {
-  animation-delay: -12000ms;
-}
-#ui .love:nth-child(41) .love_horizontal {
-  animation-delay: -12300ms;
-}
-#ui .love:nth-child(41) .love_vertical {
-  animation-delay: -12300ms;
-}
-#ui .love:nth-child(42) .love_horizontal {
-  animation-delay: -12600ms;
-}
-#ui .love:nth-child(42) .love_vertical {
-  animation-delay: -12600ms;
-}
-#ui .love:nth-child(43) .love_horizontal {
-  animation-delay: -12900ms;
-}
-#ui .love:nth-child(43) .love_vertical {
-  animation-delay: -12900ms;
-}
-#ui .love:nth-child(44) .love_horizontal {
-  animation-delay: -13200ms;
-}
-#ui .love:nth-child(44) .love_vertical {
-  animation-delay: -13200ms;
-}
-#ui .love:nth-child(45) .love_horizontal {
-  animation-delay: -13500ms;
-}
-#ui .love:nth-child(45) .love_vertical {
-  animation-delay: -13500ms;
-}
-#ui .love:nth-child(46) .love_horizontal {
-  animation-delay: -13800ms;
-}
-#ui .love:nth-child(46) .love_vertical {
-  animation-delay: -13800ms;
-}
-#ui .love:nth-child(47) .love_horizontal {
-  animation-delay: -14100ms;
-}
-#ui .love:nth-child(47) .love_vertical {
-  animation-delay: -14100ms;
-}
-#ui .love:nth-child(48) .love_horizontal {
-  animation-delay: -14400ms;
-}
-#ui .love:nth-child(48) .love_vertical {
-  animation-delay: -14400ms;
-}
-#ui .love:nth-child(49) .love_horizontal {
-  animation-delay: -14700ms;
-}
-#ui .love:nth-child(49) .love_vertical {
-  animation-delay: -14700ms;
-}
-#ui .love:nth-child(50) .love_horizontal {
-  animation-delay: -15000ms;
-}
-#ui .love:nth-child(50) .love_vertical {
-  animation-delay: -15000ms;
-}
-#ui .love:nth-child(51) .love_horizontal {
-  animation-delay: -15300ms;
-}
-#ui .love:nth-child(51) .love_vertical {
-  animation-delay: -15300ms;
-}
-#ui .love:nth-child(52) .love_horizontal {
-  animation-delay: -15600ms;
-}
-#ui .love:nth-child(52) .love_vertical {
-  animation-delay: -15600ms;
-}
-#ui .love:nth-child(53) .love_horizontal {
-  animation-delay: -15900ms;
-}
-#ui .love:nth-child(53) .love_vertical {
-  animation-delay: -15900ms;
-}
-#ui .love:nth-child(54) .love_horizontal {
-  animation-delay: -16200ms;
-}
-#ui .love:nth-child(54) .love_vertical {
-  animation-delay: -16200ms;
-}
-#ui .love:nth-child(55) .love_horizontal {
-  animation-delay: -16500ms;
-}
-#ui .love:nth-child(55) .love_vertical {
-  animation-delay: -16500ms;
-}
-#ui .love:nth-child(56) .love_horizontal {
-  animation-delay: -16800ms;
-}
-#ui .love:nth-child(56) .love_vertical {
-  animation-delay: -16800ms;
-}
-#ui .love:nth-child(57) .love_horizontal {
-  animation-delay: -17100ms;
-}
-#ui .love:nth-child(57) .love_vertical {
-  animation-delay: -17100ms;
-}
-#ui .love:nth-child(58) .love_horizontal {
-  animation-delay: -17400ms;
-}
-#ui .love:nth-child(58) .love_vertical {
-  animation-delay: -17400ms;
-}
-#ui .love:nth-child(59) .love_horizontal {
-  animation-delay: -17700ms;
-}
-#ui .love:nth-child(59) .love_vertical {
-  animation-delay: -17700ms;
-}
-#ui .love:nth-child(60) .love_horizontal {
-  animation-delay: -18000ms;
-}
-#ui .love:nth-child(60) .love_vertical {
-  animation-delay: -18000ms;
-}
-#ui .love:nth-child(61) .love_horizontal {
-  animation-delay: -18300ms;
-}
-#ui .love:nth-child(61) .love_vertical {
-  animation-delay: -18300ms;
-}
-#ui .love:nth-child(62) .love_horizontal {
-  animation-delay: -18600ms;
-}
-#ui .love:nth-child(62) .love_vertical {
-  animation-delay: -18600ms;
-}
-#ui .love:nth-child(63) .love_horizontal {
-  animation-delay: -18900ms;
-}
-#ui .love:nth-child(63) .love_vertical {
-  animation-delay: -18900ms;
-}
-#ui .love:nth-child(64) .love_horizontal {
-  animation-delay: -19200ms;
-}
-#ui .love:nth-child(64) .love_vertical {
-  animation-delay: -19200ms;
-}
-#ui .love:nth-child(65) .love_horizontal {
-  animation-delay: -19500ms;
-}
-#ui .love:nth-child(65) .love_vertical {
-  animation-delay: -19500ms;
-}
-#ui .love:nth-child(66) .love_horizontal {
-  animation-delay: -19800ms;
-}
-#ui .love:nth-child(66) .love_vertical {
-  animation-delay: -19800ms;
-}
-#ui .love:nth-child(67) .love_horizontal {
-  animation-delay: -20100ms;
-}
-#ui .love:nth-child(67) .love_vertical {
-  animation-delay: -20100ms;
-}
-#ui .love:nth-child(68) .love_horizontal {
-  animation-delay: -20400ms;
-}
-#ui .love:nth-child(68) .love_vertical {
-  animation-delay: -20400ms;
-}
-#ui .love:nth-child(69) .love_horizontal {
-  animation-delay: -20700ms;
-}
-#ui .love:nth-child(69) .love_vertical {
-  animation-delay: -20700ms;
-}
-#ui .love:nth-child(70) .love_horizontal {
-  animation-delay: -21000ms;
-}
-#ui .love:nth-child(70) .love_vertical {
-  animation-delay: -21000ms;
-}
-#ui .love:nth-child(71) .love_horizontal {
-  animation-delay: -21300ms;
-}
-#ui .love:nth-child(71) .love_vertical {
-  animation-delay: -21300ms;
-}
-#ui .love:nth-child(72) .love_horizontal {
-  animation-delay: -21600ms;
-}
-#ui .love:nth-child(72) .love_vertical {
-  animation-delay: -21600ms;
-}
-#ui .love:nth-child(73) .love_horizontal {
-  animation-delay: -21900ms;
-}
-#ui .love:nth-child(73) .love_vertical {
-  animation-delay: -21900ms;
-}
-#ui .love:nth-child(74) .love_horizontal {
-  animation-delay: -22200ms;
-}
-#ui .love:nth-child(74) .love_vertical {
-  animation-delay: -22200ms;
-}
-#ui .love:nth-child(75) .love_horizontal {
-  animation-delay: -22500ms;
-}
-#ui .love:nth-child(75) .love_vertical {
-  animation-delay: -22500ms;
-}
-#ui .love:nth-child(76) .love_horizontal {
-  animation-delay: -22800ms;
-}
-#ui .love:nth-child(76) .love_vertical {
-  animation-delay: -22800ms;
-}
-#ui .love:nth-child(77) .love_horizontal {
-  animation-delay: -23100ms;
-}
-#ui .love:nth-child(77) .love_vertical {
-  animation-delay: -23100ms;
-}
-#ui .love:nth-child(78) .love_horizontal {
-  animation-delay: -23400ms;
-}
-#ui .love:nth-child(78) .love_vertical {
-  animation-delay: -23400ms;
-}
-#ui .love:nth-child(79) .love_horizontal {
-  animation-delay: -23700ms;
-}
-#ui .love:nth-child(79) .love_vertical {
-  animation-delay: -23700ms;
-}
-#ui .love:nth-child(80) .love_horizontal {
-  animation-delay: -24000ms;
-}
-#ui .love:nth-child(80) .love_vertical {
-  animation-delay: -24000ms;
-}
-#ui .love:nth-child(81) .love_horizontal {
-  animation-delay: -24300ms;
-}
-#ui .love:nth-child(81) .love_vertical {
-  animation-delay: -24300ms;
-}
-#ui .love:nth-child(82) .love_horizontal {
-  animation-delay: -24600ms;
-}
-#ui .love:nth-child(82) .love_vertical {
-  animation-delay: -24600ms;
-}
-#ui .love:nth-child(83) .love_horizontal {
-  animation-delay: -24900ms;
-}
-#ui .love:nth-child(83) .love_vertical {
-  animation-delay: -24900ms;
-}
-#ui .love:nth-child(84) .love_horizontal {
-  animation-delay: -25200ms;
-}
-#ui .love:nth-child(84) .love_vertical {
-  animation-delay: -25200ms;
-}
-#ui .love:nth-child(85) .love_horizontal {
-  animation-delay: -25500ms;
-}
-#ui .love:nth-child(85) .love_vertical {
-  animation-delay: -25500ms;
-}
-#ui .love:nth-child(86) .love_horizontal {
-  animation-delay: -25800ms;
-}
-#ui .love:nth-child(86) .love_vertical {
-  animation-delay: -25800ms;
-}
-#ui .love:nth-child(87) .love_horizontal {
-  animation-delay: -26100ms;
-}
-#ui .love:nth-child(87) .love_vertical {
-  animation-delay: -26100ms;
-}
-#ui .love:nth-child(88) .love_horizontal {
-  animation-delay: -26400ms;
-}
-#ui .love:nth-child(88) .love_vertical {
-  animation-delay: -26400ms;
-}
-#ui .love:nth-child(89) .love_horizontal {
-  animation-delay: -26700ms;
-}
-#ui .love:nth-child(89) .love_vertical {
-  animation-delay: -26700ms;
-}
-#ui .love:nth-child(90) .love_horizontal {
-  animation-delay: -27000ms;
-}
-#ui .love:nth-child(90) .love_vertical {
-  animation-delay: -27000ms;
-}
-#ui .love:nth-child(91) .love_horizontal {
-  animation-delay: -27300ms;
-}
-#ui .love:nth-child(91) .love_vertical {
-  animation-delay: -27300ms;
-}
-#ui .love:nth-child(92) .love_horizontal {
-  animation-delay: -27600ms;
-}
-#ui .love:nth-child(92) .love_vertical {
-  animation-delay: -27600ms;
-}
-#ui .love:nth-child(93) .love_horizontal {
-  animation-delay: -27900ms;
-}
-#ui .love:nth-child(93) .love_vertical {
-  animation-delay: -27900ms;
-}
-#ui .love:nth-child(94) .love_horizontal {
-  animation-delay: -28200ms;
-}
-#ui .love:nth-child(94) .love_vertical {
-  animation-delay: -28200ms;
-}
-#ui .love:nth-child(95) .love_horizontal {
-  animation-delay: -28500ms;
-}
-#ui .love:nth-child(95) .love_vertical {
-  animation-delay: -28500ms;
-}
-#ui .love:nth-child(96) .love_horizontal {
-  animation-delay: -28800ms;
-}
-#ui .love:nth-child(96) .love_vertical {
-  animation-delay: -28800ms;
-}
-#ui .love:nth-child(97) .love_horizontal {
-  animation-delay: -29100ms;
-}
-#ui .love:nth-child(97) .love_vertical {
-  animation-delay: -29100ms;
-}
-#ui .love:nth-child(98) .love_horizontal {
-  animation-delay: -29400ms;
-}
-#ui .love:nth-child(98) .love_vertical {
-  animation-delay: -29400ms;
-}
-#ui .love:nth-child(99) .love_horizontal {
-  animation-delay: -29700ms;
-}
-#ui .love:nth-child(99) .love_vertical {
-  animation-delay: -29700ms;
-}
-#ui .love:nth-child(100) .love_horizontal {
-  animation-delay: -30000ms;
-}
-#ui .love:nth-child(100) .love_vertical {
-  animation-delay: -30000ms;
-}
+/* ---------- shell ---------- */
+.shell{position:relative;z-index:5;max-width:1460px;margin:0 auto;padding:18px 22px 40px;display:flex;flex-direction:column;min-height:100vh}
 
-@keyframes horizontal {
-  from {
-    transform: translateX(0px);
-  }
-  to {
-    transform: translateX(450px);
-  }
+header.top{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  border:1px solid var(--line);background:var(--panel);
+  padding:12px 18px;margin-bottom:16px;box-shadow:0 0 24px rgba(57,255,110,.06), inset 0 0 40px rgba(57,255,110,.03);
+  position:relative;
 }
-@keyframes vertical {
-  0% {
-    transform: translateY(180px);
-  }
-  10% {
-    transform: translateY(45px);
-  }
-  15% {
-    transform: translateY(4.5px);
-  }
-  18% {
-    transform: translateY(0px);
-  }
-  20% {
-    transform: translateY(4.5px);
-  }
-  22% {
-    transform: translateY(34.61538px);
-  }
-  24% {
-    transform: translateY(64.28571px);
-  }
-  25% {
-    transform: translateY(112.5px);
-  }
-  26% {
-    transform: translateY(64.28571px);
-  }
-  28% {
-    transform: translateY(34.61538px);
-  }
-  30% {
-    transform: translateY(4.5px);
-  }
-  32% {
-    transform: translateY(0px);
-  }
-  35% {
-    transform: translateY(4.5px);
-  }
-  40% {
-    transform: translateY(45px);
-  }
-  50% {
-    transform: translateY(180px);
-  }
-  71% {
-    transform: translateY(428.57143px);
-  }
-  72.5% {
-    transform: translateY(441.17647px);
-  }
-  75% {
-    transform: translateY(450px);
-  }
-  77.5% {
-    transform: translateY(441.17647px);
-  }
-  79% {
-    transform: translateY(428.57143px);
-  }
-  100% {
-    transform: translateY(180px);
-  }
+header.top::after{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--ph-dim),transparent)}
+.logo{font-family:var(--font-display);font-size:42px;line-height:.9;letter-spacing:2px;color:var(--ph);text-shadow:0 0 12px rgba(57,255,110,.55);position:relative;cursor:default;user-select:none}
+.logo .dot{color:var(--amber);text-shadow:0 0 10px rgba(255,179,64,.6)}
+.logo-glitch{position:absolute;inset:0;color:var(--red);clip-path:inset(30% 0 55% 0);animation:glitch1 3.4s infinite steps(1);opacity:.8;pointer-events:none}
+.logo-glitch2{position:absolute;inset:0;color:var(--cyan);clip-path:inset(60% 0 25% 0);animation:glitch2 2.7s infinite steps(1);opacity:.7;pointer-events:none}
+@keyframes glitch1{0%,92%{transform:none;opacity:0}93%{transform:translate(-3px,1px);opacity:.8}95%{transform:translate(2px,-1px);opacity:.6}97%{transform:none;opacity:0}}
+@keyframes glitch2{0%,89%{transform:none;opacity:0}90%{transform:translate(3px,-1px);opacity:.7}93%{transform:none;opacity:0}}
+.ver{font-size:12px;color:var(--muted);letter-spacing:1px}
+.spacer{flex:1}
+.chip{
+  border:1px solid var(--line-hi);padding:6px 12px;font-size:13px;color:var(--text);
+  background:rgba(57,255,110,.04);display:inline-flex;align-items:center;gap:8px;white-space:nowrap
 }
+.chip b{color:var(--ph);font-weight:normal;text-shadow:0 0 8px rgba(57,255,110,.5)}
+.chip.amber b{color:var(--amber);text-shadow:0 0 8px rgba(255,179,64,.5)}
+button.btn{
+  font-family:var(--font-mono);font-size:14px;letter-spacing:1px;cursor:pointer;
+  background:rgba(57,255,110,.06);color:var(--ph);border:1px solid var(--line-hi);
+  padding:8px 16px;transition:all .15s;position:relative
+}
+button.btn:hover{background:rgba(57,255,110,.16);box-shadow:0 0 14px rgba(57,255,110,.35);text-shadow:0 0 6px rgba(57,255,110,.8)}
+button.btn:active{transform:translateY(1px)}
+button.btn.ghost{color:var(--muted);border-color:var(--line)}
+button.btn.ghost:hover{color:var(--text);box-shadow:none;background:rgba(255,255,255,.04)}
+button.btn.warn{color:var(--amber);border-color:#5c421a}
+button.btn.warn:hover{background:rgba(255,179,64,.1);box-shadow:0 0 14px rgba(255,179,64,.3)}
 
-  </style>
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr) 350px;gap:16px;align-items:start;flex:1}
+@media (max-width:1180px){.layout{grid-template-columns:250px minmax(0,1fr)}.terminal-wrap{grid-column:1/-1}}
+@media (max-width:820px){.layout{grid-template-columns:1fr}}
+
+.panel{border:1px solid var(--line);background:var(--panel);box-shadow:0 0 20px rgba(0,0,0,.5), inset 0 0 60px rgba(57,255,110,.02);position:relative}
+.panel-title{
+  font-family:var(--font-display);font-size:20px;letter-spacing:2px;color:var(--ph-dim);
+  padding:8px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;
+  text-transform:uppercase
+}
+.panel-title small{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:1px}
+
+/* ---------- level list ---------- */
+.lv-list{display:flex;flex-direction:column}
+.lv-item{
+  display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;
+  border-bottom:1px solid var(--line);border-left:3px solid transparent;transition:all .15s;background:transparent
+}
+.lv-item:last-child{border-bottom:none}
+.lv-item:hover{background:rgba(57,255,110,.06)}
+.lv-item.active{border-left-color:var(--ph);background:rgba(57,255,110,.09)}
+.lv-item.locked{cursor:not-allowed;opacity:.38}
+.lv-item.done .lv-name{color:var(--ph)}
+.lv-idx{font-family:var(--font-display);font-size:22px;color:var(--muted);width:30px;text-align:center}
+.lv-item.done .lv-idx{color:var(--ph);text-shadow:0 0 8px rgba(57,255,110,.6)}
+.lv-meta{flex:1;min-width:0}
+.lv-name{font-size:14px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lv-sub{font-size:11px;color:var(--muted);letter-spacing:1px}
+.lv-stars{font-size:12px;color:var(--amber);letter-spacing:2px;min-width:44px;text-align:right}
+.lv-lock{color:var(--muted);font-size:13px}
+
+/* ---------- challenge ---------- */
+.ch-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:16px 18px 4px}
+.ch-num{font-family:var(--font-display);font-size:56px;line-height:.8;color:var(--ph-faint);text-shadow:0 0 18px rgba(57,255,110,.15)}
+.ch-title{font-family:var(--font-display);font-size:32px;letter-spacing:2px;color:var(--ph);text-shadow:0 0 10px rgba(57,255,110,.4)}
+.ch-tag{font-size:11px;color:var(--amber);border:1px solid #5c421a;padding:2px 8px;letter-spacing:2px}
+.ch-tag.hard{color:var(--red);border-color:#5c1a1a}
+.ch-tag.boss{color:var(--cyan);border-color:#1a4a5c}
+.ch-brief{padding:6px 18px 14px;color:var(--muted);font-size:14px;max-width:70ch}
+.ch-brief em{color:var(--amber);font-style:normal}
+.ch-code{
+  margin:0 18px 14px;border:1px solid var(--line);background:#050b07;padding:14px 16px;
+  font-size:13.5px;overflow-x:auto;white-space:pre;color:#9fe8b5;position:relative
+}
+.ch-code::before{content:"// SOURCE";position:absolute;top:4px;right:8px;font-size:10px;color:var(--ph-faint);letter-spacing:2px}
+.ch-code .hl-c{color:#4f7f60}
+.ch-code .hl-k{color:var(--amber)}
+.ch-code .hl-s{color:var(--ph)}
+.ch-code .hl-f{color:var(--cyan)}
+.ch-input-row{display:flex;gap:10px;padding:0 18px 14px;flex-wrap:wrap}
+.ch-input{
+  flex:1;min-width:220px;font-family:var(--font-mono);font-size:16px;letter-spacing:1px;
+  background:#050b07;border:1px solid var(--line-hi);color:var(--ph);padding:11px 14px;outline:none;
+  transition:all .15s
+}
+.ch-input:focus{border-color:var(--ph);box-shadow:0 0 14px rgba(57,255,110,.25)}
+.ch-input.denied{animation:shake .35s;border-color:var(--red);box-shadow:0 0 14px rgba(255,77,77,.3)}
+.ch-input:disabled{opacity:.4}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.feedback{min-height:22px;padding:0 18px 8px;font-size:14px}
+.feedback.bad{color:var(--red)}
+.feedback.good{color:var(--ph)}
+.feedback.info{color:var(--amber)}
+.hints{padding:0 18px 16px;display:flex;flex-direction:column;gap:8px}
+.hint-line{border-left:3px solid var(--amber);background:rgba(255,179,64,.05);padding:8px 12px;font-size:13px;color:#d9c08a}
+.hint-line b{color:var(--amber)}
+.ch-foot{display:flex;gap:10px;padding:0 18px 18px;flex-wrap:wrap}
+.stamp{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:8;
+  pointer-events:none;
+}
+.stamp span{
+  font-family:var(--font-display);font-size:88px;letter-spacing:6px;color:var(--ph);
+  border:4px solid var(--ph);padding:6px 30px;transform:rotate(-8deg);
+  text-shadow:0 0 30px rgba(57,255,110,.8);box-shadow:0 0 40px rgba(57,255,110,.4), inset 0 0 30px rgba(57,255,110,.2);
+  background:rgba(4,12,7,.82);animation:stampIn .45s cubic-bezier(.2,2.2,.4,1) both
+}
+.stamp span.red{color:var(--red);border-color:var(--red);text-shadow:0 0 30px rgba(255,77,77,.8);box-shadow:0 0 40px rgba(255,77,77,.35), inset 0 0 30px rgba(255,77,77,.2)}
+@keyframes stampIn{0%{transform:rotate(-8deg) scale(2.6);opacity:0}60%{transform:rotate(-8deg) scale(.92);opacity:1}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+.stamp.fade{animation:stampFade .5s .9s both}
+@keyframes stampFade{to{opacity:0;visibility:hidden}}
+.done-banner{margin:0 18px 16px;border:1px solid var(--ph-dim);background:rgba(57,255,110,.07);padding:12px 16px;color:var(--ph);font-size:14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.done-banner .btn{margin-left:auto}
+
+/* ---------- terminal ---------- */
+.terminal-wrap{position:sticky;top:16px;display:flex;flex-direction:column;max-height:calc(100vh - 40px)}
+@media (max-width:1180px){.terminal-wrap{position:static;max-height:420px}}
+.term{
+  flex:1;overflow-y:auto;padding:12px 14px;font-size:12.5px;line-height:1.7;background:#03060499;
+  scrollbar-width:thin;scrollbar-color:var(--ph-dim) transparent
+}
+.term::-webkit-scrollbar{width:6px}
+.term::-webkit-scrollbar-thumb{background:var(--ph-dim)}
+.t-line{white-space:pre-wrap;word-break:break-all;color:#79b890}
+.t-line .tp{color:var(--ph-faint)}
+.t-line.ok{color:var(--ph)}
+.t-line.err{color:var(--red)}
+.t-line.sys{color:var(--amber)}
+.t-line.dim{color:#3d6350}
+.cursor-line::after{content:"▊";color:var(--ph);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- intro overlay ---------- */
+.intro{
+  position:fixed;inset:0;z-index:50;background:rgba(2,5,3,.94);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:20px
+}
+.intro.hidden{display:none}
+.intro-box{max-width:720px;width:100%;border:1px solid var(--line-hi);background:var(--panel-solid);box-shadow:0 0 60px rgba(57,255,110,.15);padding:34px 38px;position:relative}
+.intro-box::before{content:"";position:absolute;inset:6px;border:1px solid var(--line);pointer-events:none}
+.ascii{font-family:var(--font-display);color:var(--ph);font-size:15px;line-height:1.15;white-space:pre;text-shadow:0 0 14px rgba(57,255,110,.5);margin-bottom:18px;overflow-x:auto}
+.intro-rules{margin:0 0 22px;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;font-size:14px}
+.intro-rules li::before{content:"» ";color:var(--amber)}
+.intro-rules em{color:var(--amber);font-style:normal}
+.intro-type{min-height:20px;color:var(--muted);font-size:13px;margin-bottom:16px}
+
+/* ---------- toast ---------- */
+.toasts{position:fixed;right:18px;bottom:18px;z-index:60;display:flex;flex-direction:column;gap:8px}
+.toast{
+  border:1px solid var(--line-hi);background:rgba(6,14,9,.95);color:var(--ph);padding:10px 16px;font-size:13px;
+  box-shadow:0 0 20px rgba(57,255,110,.2);animation:toastIn .25s both;max-width:340px
+}
+.toast.amber{color:var(--amber);border-color:#5c421a;box-shadow:0 0 20px rgba(255,179,64,.2)}
+@keyframes toastIn{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+
+.scorepop{position:fixed;left:50%;top:38%;transform:translateX(-50%);z-index:55;font-family:var(--font-display);font-size:56px;color:var(--amber);text-shadow:0 0 24px rgba(255,179,64,.7);pointer-events:none;animation:pop 1.4s both}
+@keyframes pop{0%{transform:translate(-50%,20px);opacity:0}20%{transform:translate(-50%,-6px);opacity:1}80%{opacity:1}100%{transform:translate(-50%,-70px);opacity:0}}
+
+footer.foot{margin-top:22px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;letter-spacing:1px}
+footer.foot .k{color:var(--ph-dim)}
+</style>
 </head>
 <body>
-  <div id="ui">
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">宸宸</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">宝宝</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">希望你</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">不要</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">不要让自己</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">那么累</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我想让你</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">每天开开心心</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">快快乐乐</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">少些烦恼</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">多些开心</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">如果累了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">可以告诉我</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我一直都在</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">会陪着你</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">但是不能不理我</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">听到了吗</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">记住了吗</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">爱你爱你</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">喜欢你</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">喜欢喜欢你</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">爱你~</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">爱你啊</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">love</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">love</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你不累的时候</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">记得来找我</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我想你了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">想死你了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你还累吗</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">想和你聊天</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你咋还不来找我啊</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">都给我说口渴了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我去喝口水</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你怎么还不来找我</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">宸宸</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">想你了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">呜呜呜</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你不来</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我就在这等你</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你还累吗</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你好点了吗</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">说话啊</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你说话啊</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我想你了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">不说话我就不走了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我的天</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">还不找我</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">呜呜呜呜呜</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">等不到你的消息</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">该怎么办</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">没事</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">时间还长</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">慢慢等</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我等你啊</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">等你好起来</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">嘿嘿嘿</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我好吧</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你得对我好点</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">我不管</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你听见了吗</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">你要是没听见</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">不理你了</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">略略略略</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">love</div>
-      </div>
-    </div>
-  </div>
-  <div class="love">
-    <div class="love_horizontal">
-      <div class="love_vertical">
-        <div class="love_word">Love</div>
-      </div>
-    </div>
+<canvas id="matrix"></canvas>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+<div class="flicker"></div>
+
+<div class="shell">
+  <header class="top">
+    <div class="logo" id="logo">CRACK<span class="dot">.</span>ME<span class="logo-glitch">CRACK.ME</span><span class="logo-glitch2">CRACK.ME</span></div>
+    <div class="ver">WEB REVERSING LAB<br>v2.7 // OFFLINE</div>
+    <div class="spacer"></div>
+    <div class="chip">SCORE <b id="hudScore">0</b>/600</div>
+    <div class="chip amber">RANK <b id="hudRank">SCR1PT K1DD1E</b></div>
+    <div class="chip">进度 <b id="hudProg">0/6</b></div>
+    <button class="btn ghost" id="btnMute" title="切换音效">♪ SFX:ON</button>
+    <button class="btn warn" id="btnReset" title="清空所有进度">RESET</button>
+  </header>
+
+  <div class="layout">
+    <!-- left: levels -->
+    <aside class="panel">
+      <div class="panel-title">MISSIONS <small>关卡列表</small></div>
+      <div class="lv-list" id="lvList"></div>
+    </aside>
+
+    <!-- center: challenge -->
+    <main class="panel" id="chPanel" style="position:relative;overflow:hidden">
+      <div class="panel-title" id="chPanelTitle">CHALLENGE <small>挑战面板</small></div>
+      <div id="chBody"></div>
+      <div class="stamp" id="stamp" style="display:none"><span id="stampText">ACCESS GRANTED</span></div>
+    </main>
+
+    <!-- right: terminal -->
+    <div class="terminal-wrap panel">
+      <div class="panel-title">SYST3M L0G <small>tty0</small></div>
+      <div class="term" id="term"></div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div><span class="k">HINT:</span> 在本实验里，按 <span class="k">F12</span> 是合法的。源码、控制台、断点——都是你的工具。</div>
+    <div>© WEB CRACKME LAB — 仅供学习逆向思维</div>
+  </footer>
+</div>
+
+<!-- intro overlay -->
+<div class="intro" id="intro">
+  <div class="intro-box">
+    <div class="ascii">
++------------------------------------------------------+
+|   ____ ____  ____   ___   ____  _____ ____      _    |
+|  / ___|  _ \|  _ \ / _ \ / ___|_   _|  _ \    / \   |
+| | |   | |_) | |_) | | | | |     | | | |_) |  / _ \  |
+| | |___|  _ <|  _ <| |_| | |___  | | |  _ <  / ___ \ |
+|  \____|_| \_\_| \_\\___/ \____| |_| |_| \_\/_/  \_\|
+|        >>  W E B   R E V E R S I N G   L A B  <<     |
++------------------------------------------------------+</div>
+    <ul class="intro-rules">
+      <li><em>6</em> 道关卡，层层递进：编码 → 算法 → 密码学 → 爆破 → 隐匿信道 → 混淆终局。</li>
+      <li>每关 <em>100</em> 分。使用提示会扣分并掉星：无提示通关 = <em>★★★</em>。</li>
+      <li>查看网页源码、打开控制台、写脚本爆破——在这场游戏里<em>全部合法</em>。</li>
+      <li>进度自动保存。RESET 按钮会抹掉一切，慎点。</li>
+    </ul>
+    <div class="intro-type" id="introType"></div>
+    <button class="btn" id="btnStart" style="font-size:16px;padding:12px 28px">[ 开始入侵 ]</button>
   </div>
 </div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/*__LEVELS_START__*/
+'use strict';
+const pad = (n, w) => String(n).padStart(w, '0');
+const rot13 = s => s.replace(/[a-zA-Z]/g, c => {
+  const base = c <= 'Z' ? 65 : 97;
+  return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
+});
+
+const LEVELS = [
+  {
+    id: 'l1', zh: '明文箱子', codename: 'THE GLARING SECRET', diff: 1, score: 100,
+    brief: '每个序列号都锁在一个盒子里。奇怪的是，这个盒子的封条……<em>好读得可疑</em>。把正确的序列号交给下面这把锁。',
+    code:
+`<span class="hl-c">// vault.js — 别问我为什么这么写，前任员工写的</span>
+<span class="hl-k">const</span> SEALED = <span class="hl-s">"RTNJM0VGMy1HVTMtSjBFWVE="</span>;
+
+<span class="hl-k">function</span> <span class="hl-f">openVault</span>(key) {
+  <span class="hl-k">return</span> unseal(SEALED) === key;  <span class="hl-c">// unseal 是个秘密</span>
+}`,
+    hint: [
+      '那串字符的结尾是 "=" —— 这是 Base64 的签名。控制台里有个现成的函数叫 atob()。',
+      'atob 解出来的内容字母全乱了？试试 ROT13：每个字母在字母表里移动 13 位（它有一个特性：做两次就回到原文）。',
+      '控制台运行：const r=s=>s.replace(/[a-zA-Z]/g,c=>String.fromCharCode((c<="Z"?90:122)>=c.charCodeAt(0)?c.charCodeAt(0)+13:c.charCodeAt(0)-13)); 然后对 atob("RTNJM0VGMy1HVTMtSjBFWVE=") 的结果执行 r()。'
+    ],
+    hintCost: [10, 15, 25],
+    check(input) { return input.trim() === rot13(atob('RTNJM0VGMy1HVTMtSjBFWVE=')); },
+    successMsg: '保险箱开了。里面只有一张纸条：W3LC0ME, AGENT.'
+  },
+  {
+    id: 'l2', zh: '注册机', codename: 'KEYGEN ME', diff: 2, score: 100,
+    brief: '经典 CrackMe：用户名 <em>AGENT-1337</em> 已注册，但序列号丢了。校验算法就贴在下面——变量名被前任员工起得非常随意。写出它的注册机。',
+    code:
+`<span class="hl-c">// keygen.js — 逻辑完整可用，名字故意起得很烂</span>
+<span class="hl-k">function</span> <span class="hl-f">_v</span>(n, k) {
+  <span class="hl-k">let</span> a = 0, b = 1, c = 7;
+  <span class="hl-k">for</span> (<span class="hl-k">const</span> ch <span class="hl-k">of</span> n) {
+    <span class="hl-k">const</span> t = ch.<span class="hl-f">charCodeAt</span>(0);
+    a = (a + t) % 251;
+    b = (b * 31 + t) % 9973;
+    c = c ^ t;
+  }
+  <span class="hl-k">return</span> k === pad(a,3) + <span class="hl-s">"-"</span> + pad(b,4) + <span class="hl-s">"-"</span> + c.<span class="hl-f">toString</span>(16).toUpperCase().padStart(4,<span class="hl-s">"0"</span>);
+}`,
+    hint: [
+      '循环体里有三条互不干扰的运算线：a、b、c。逐字符吃进用户名的字符码。',
+      'a 是累加和取模；b 每轮乘 31 再加字符码取模（LCG 风格）；c 是异或累积。把三段的最后结果按 a-b-c 用 "-" 拼起来。',
+      '在控制台原样粘贴 _v 和 pad，再写个同样逻辑的 _g(name) 直接打印注册号即可。'
+    ],
+    hintCost: [10, 15, 25],
+    check(input) {
+      const name = 'AGENT-1337';
+      let a = 0, b = 1, c = 7;
+      for (const ch of name) {
+        const t = ch.charCodeAt(0);
+        a = (a + t) % 251;
+        b = (b * 31 + t) % 9973;
+        c = c ^ t;
+      }
+      return input.trim() === `${pad(a, 3)}-${pad(b, 4)}-${c.toString(16).toUpperCase().padStart(4, '0')}`;
+    },
+    successMsg: '注册机验证通过。AGENT-1337 已上线。'
+  },
+  {
+    id: 'l3', zh: '异或暗箱', codename: 'THE XOR BOX', diff: 2, score: 100,
+    brief: '密文已交给你，钥匙也在房间里——只是它自称 <em>"salt"</em>。把明文找出来。',
+    code:
+`<span class="hl-c">// box.js — 拦截到的传输数据</span>
+<span class="hl-k">const</span> BOX  = <span class="hl-s">"EwMLABEcf2N2Hx5qYxsdC31tenwX"</span>;
+<span class="hl-k">const</span> salt = <span class="hl-s">"K3Y-XOR-9"</span>;  <span class="hl-c">// 盐而已，谁会在意盐呢</span>
+
+<span class="hl-c">// 接收端做的事（被撕掉了，你只能看到一半）：</span>
+<span class="hl-c">//   bytes[i] = plain[i] OP salt[i % salt.length]</span>`,
+    hint: [
+      'atob(BOX) 会得到一串"乱码字节"。乱码 = 被异或过的字节。',
+      '把每个字节与 salt 循环异或：plain[i] = bytes[i] ^ salt.charCodeAt(i % salt.length)。OP 就是 XOR。',
+      '控制台：const b=[...atob("EwMLABEcf2N2Hx5qYxsdC31tenwX")].map(c=>c.charCodeAt(0)); const k="K3Y-XOR-9"; console.log(b.map((v,i)=>String.fromCharCode(v^k.charCodeAt(i%k.length))).join(""))'
+    ],
+    hintCost: [10, 15, 25],
+    check(input) {
+      const b = [...atob('EwMLABEcf2N2Hx5qYxsdC31tenwX')].map(c => c.charCodeAt(0));
+      const k = 'K3Y-XOR-9';
+      return input.trim() === b.map((v, i) => String.fromCharCode(v ^ k.charCodeAt(i % k.length))).join('');
+    },
+    successMsg: '暗箱已解。记住：XOR 不是加密——是化妆。'
+  },
+  {
+    id: 'l4', zh: '碰撞工厂', codename: 'COLLISION FACTORY', diff: 3, score: 100,
+    brief: '这个哈希函数弱得离谱，而你知道目标摘要：<em>h(x) = 40404</em>。找出任意一个 4 位字符 [A-Za-z0-9] 组成的 x，使等式成立。答案不唯一——工厂里全是碰撞。',
+    code:
+`<span class="hl-c">// weakhash.js — 值域 0..65520</span>
+<span class="hl-k">function</span> <span class="hl-f">h</span>(s) {
+  <span class="hl-k">let</span> x = 7;
+  <span class="hl-k">for</span> (<span class="hl-k">const</span> ch <span class="hl-k">of</span> s) {
+    x = (x * 131 + ch.<span class="hl-f">charCodeAt</span>(0)) % 65521;
+  }
+  <span class="hl-k">return</span> x;
+}
+<span class="hl-c">// h("????") === 40404  →  求 ????</span>`,
+    hint: [
+      '62^4 ≈ 1477 万 个候选，而值域只有 65521——由鸽笼原理，碰撞必然大量存在。写个循环爆破即可。',
+      '控制台四重循环遍历字符集，对每个组合调用 h()，命中 40404 就打印。1477 万次循环在现代浏览器里只需几秒。',
+      '已知一个解：Agvy（验证：h("Agvy") === 40404）。当然，亲手爆破出来的更酷。'
+    ],
+    hintCost: [10, 15, 25],
+    check(input) {
+      const s = input.trim();
+      if (!/^[A-Za-z0-9]{4}$/.test(s)) return false;
+      let x = 7;
+      for (const ch of s) x = (x * 131 + ch.charCodeAt(0)) % 65521;
+      return x === 40404;
+    },
+    successMsg: '碰撞命中。弱哈希在上，彩虹表在下。'
+  },
+  {
+    id: 'l5', zh: '只读频道', codename: 'CONSOLE ONLY', diff: 3, score: 100,
+    brief: '这个页面上<em>没有</em>答案。口令被拆成三段，通过一条隐匿信道投递——它只存在于浏览器控制台里。打开 F12，回到本关，仔细看输出。口令格式：<em>A-B-C</em>。',
+    code:
+`<span class="hl-c">// channel.js — 信道协议（接收端已注释）</span>
+<span class="hl-k">const</span> FRAGMENTS = [A, B, C];
+<span class="hl-c">// 投递方式：</span>
+<span class="hl-c">//   [1] 混在带样式的系统日志里</span>
+<span class="hl-c">//   [2] 藏在一次表格广播的第 ? 行</span>
+<span class="hl-c">//   [3] 延迟投递，随"遥测数据"到达</span>`,
+    hint: [
+      '激活本关后打开控制台（F12），刷新注意力：注意那些看起来最像"系统噪音"的带样式输出。',
+      'console.table 里的表格有一行数据不属于任何真实用户——它的备注列就是一段口令。',
+      '有些日志会迟到 8 秒，那是第三段。按 1-2-3 的顺序用 "-" 连接成 A-B-C。'
+    ],
+    hintCost: [10, 15, 25],
+    check(input) { return input.trim() === 'D3V-C0NS0LE-PR0'; },
+    successMsg: '隐匿信道监听完毕。你已经在用攻击者的眼睛看页面了。',
+    onActivate(log) {
+      if (typeof console === 'undefined') return;
+      const decoys = ['0xDEADBEEF', 'GUEST', 'NULL'];
+      console.log('%c[SYS] heartbeat %c' + decoys[Math.floor(Math.random() * decoys.length)], 'color:#3d6350', 'color:#5d8f70');
+      console.log('%c⚠ KERNEL CACHE: "D3V"  %c← 这不是错误。', 'color:#ffb340;font-size:18px;font-weight:bold', 'color:#3d6350');
+      console.table([
+        { user: 'admin',  note: 'session-ok' },
+        { user: 'ghost',  note: 'C0NS0LE' },
+        { user: 'tester', note: 'pending' }
+      ]);
+      console.log('[NET] scheduled telemetry in 8s ...');
+      setTimeout(() => {
+        console.log('%c[TELEMETRY] token-part = "PR0"', 'color:#39ff6e;font-size:16px');
+        console.log('%c[TELEMETRY] done. 3 fragments delivered.', 'color:#3d6350');
+      }, 8000);
+      if (typeof log === 'function') log('信道已激活：三条碎片将在控制台投递（其中一条迟到 8 秒）。', 'sys');
+    }
+  },
+  {
+    id: 'l6', zh: '莱默之门', codename: 'LEHMER GATE', diff: 4, score: 100,
+    brief: '最后一扇门。拦截到的不是字符串，而是一串<em>数字</em>。加密器使用莱默生成器（Lehmer RNG）产生掩码再逐字符异或。恢复出形如 <em>FLAG{...}</em> 的明文，推门而入。',
+    code:
+`<span class="hl-c">// gate.js — 加密端源码（解密端不存在）</span>
+<span class="hl-k">const</span> MUL = 48271, MOD = 2147483647;
+<span class="hl-k">let</span>   seed = 1337;
+
+<span class="hl-k">function</span> <span class="hl-f">nextMask</span>() {
+  seed = seed * MUL % MOD;      <span class="hl-c">// 莱默生成器</span>
+  <span class="hl-k">return</span> seed & 0x7f;
+}
+
+<span class="hl-c">// 拦截到的密文（逐字符编码）： </span>
+<span class="hl-k">const</span> TARGET = [<span class="hl-s">17,15,123,58,76,17,9,48,21,104,
+  16,23,66,11,112,100,106,31,18,122,44</span>];
+<span class="hl-c">// plain[i] = TARGET[i] XOR nextMask_i()</span>`,
+    hint: [
+      'XOR 是自逆运算：enc ^ mask = plain，plain ^ mask = enc。你不需要"解密算法"，只需要重放同样的掩码序列。',
+      '关键点：掩码顺序不能乱。从 seed=1337 开始，每处理一个字符前先推进一次生成器（21 个字符 = 推进 21 次），每次取 seed & 0x7f 作为掩码。',
+      '控制台：let s=1337;const T=[17,15,123,58,76,17,9,48,21,104,16,23,66,11,112,100,106,31,18,122,44];console.log(T.map(t=>{s=s*48271%2147483647;return String.fromCharCode(t^(s&0x7f))}).join(""))'
+    ],
+    hintCost: [10, 15, 25],
+    check(input) {
+      const T = [17,15,123,58,76,17,9,48,21,104,16,23,66,11,112,100,106,31,18,122,44];
+      let s = 1337;
+      const plain = T.map(t => {
+        s = s * 48271 % 2147483647;
+        return String.fromCharCode(t ^ (s & 0x7f));
+      }).join('');
+      return input.trim() === plain;
+    },
+    successMsg: '门开了。FLAG 已确认 ——你就是钥匙。'
+  }
+];
+
+/* RANKS */
+const RANKS = [
+  [0,   'SCR1PT K1DD1E'],
+  [100, 'R3VERS3R'],
+  [300, 'H4CK3R'],
+  [500, 'CR4CKM3 M4ST3R']
+];
+/*__LEVELS_END__*/
+</script>
+
+<script>
+/* ============ ENGINE (UI 层) ============ */
+const $ = sel => document.querySelector(sel);
+const STORE_KEY = 'crackme_v1_state';
+const SEEN_KEY  = 'crackme_v1_seen';
+const MUTE_KEY  = 'crackme_v1_mute';
+
+let state = loadState();
+let currentLevel = 0;
+let levelStartAt = {};   // id -> ts
+let sessionLogCount = 0;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.done && typeof s.unlocked === 'number') return s;
+    }
+  } catch (e) {}
+  return { done: {}, unlocked: 1, mute: false };
+}
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+/* ---------- sound (WebAudio) ---------- */
+let actx = null;
+function ac() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  return actx;
+}
+function beep(freq, dur = 0.07, type = 'square', vol = 0.05, delay = 0) {
+  if (state.mute) return;
+  const ctx = ac(); if (!ctx) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, ctx.currentTime + delay);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(ctx.currentTime + delay); o.stop(ctx.currentTime + delay + dur + 0.02);
+}
+const sfx = {
+  key:   () => beep(880, 0.03, 'square', 0.02),
+  click: () => beep(660, 0.05, 'square', 0.04),
+  deny:  () => { beep(160, 0.12, 'sawtooth', 0.06); beep(120, 0.16, 'sawtooth', 0.05, 0.09); },
+  hint:  () => beep(440, 0.09, 'triangle', 0.05),
+  win:   () => { [523, 659, 784, 1046].forEach((f, i) => beep(f, 0.11, 'square', 0.05, i * 0.09)); }
+};
+
+/* ---------- terminal ---------- */
+const term = $('#term');
+function log(msg, cls = '') {
+  const d = document.createElement('div');
+  d.className = 't-line ' + cls;
+  const ts = new Date().toTimeString().slice(0, 8);
+  d.innerHTML = `<span class="tp">[${ts}]</span> ${msg}`;
+  term.appendChild(d);
+  while (term.children.length > 220) term.removeChild(term.firstChild);
+  term.scrollTop = term.scrollHeight;
+}
+function typeLog(msg, cls = '', speed = 12) {
+  return new Promise(res => {
+    const d = document.createElement('div');
+    d.className = 't-line ' + cls;
+    const ts = new Date().toTimeString().slice(0, 8);
+    d.innerHTML = `<span class="tp">[${ts}]</span> <span class="tx"></span>`;
+    term.appendChild(d);
+    const tx = d.querySelector('.tx');
+    let i = 0;
+    const t = setInterval(() => {
+      tx.textContent = msg.slice(0, ++i);
+      term.scrollTop = term.scrollHeight;
+      if (i >= msg.length) { clearInterval(t); res(d); }
+    }, speed);
+  });
+}
+
+/* ---------- toast / stamp ---------- */
+function toast(msg, amber = false) {
+  const d = document.createElement('div');
+  d.className = 'toast' + (amber ? ' amber' : '');
+  d.textContent = msg;
+  $('#toasts').appendChild(d);
+  setTimeout(() => d.remove(), 4200);
+}
+function showStamp(text, red = false) {
+  const s = $('#stamp'), t = $('#stampText');
+  t.textContent = text;
+  t.className = red ? 'red' : '';
+  s.classList.remove('fade');
+  s.style.display = 'flex';
+  void s.offsetWidth;
+  if (!red) s.classList.add('fade');
+}
+function hideStamp() { $('#stamp').style.display = 'none'; }
+
+/* ---------- scoring ---------- */
+function totalScore() {
+  let s = 0;
+  for (const lv of LEVELS) {
+    const d = state.done[lv.id];
+    if (d) s += lv.score - d.hintCost;
+  }
+  return Math.max(0, s);
+}
+function rankOf(score) {
+  let r = RANKS[0][1];
+  for (const [th, name] of RANKS) if (score >= th) r = name;
+  return r;
+}
+function starsOf(hints) { return hints === 0 ? 3 : hints <= 1 ? 2 : 1; }
+
+/* ---------- level list ---------- */
+function renderList() {
+  const list = $('#lvList');
+  list.innerHTML = '';
+  LEVELS.forEach((lv, i) => {
+    const unlocked = i < state.unlocked;
+    const done = state.done[lv.id];
+    const el = document.createElement('div');
+    el.className = 'lv-item' + (i === currentLevel ? ' active' : '') + (unlocked ? '' : ' locked') + (done ? ' done' : '');
+    const stars = done ? '★'.repeat(done.stars) + '☆'.repeat(3 - done.stars) : '';
+    el.innerHTML = `
+      <div class="lv-idx">${done ? '✓' : pad(i + 1, 2)}</div>
+      <div class="lv-meta">
+        <div class="lv-name">${lv.zh} · ${lv.codename}</div>
+        <div class="lv-sub">${unlocked ? (done ? '已破解 ' + done.attempts + ' 次尝试' : '难度 ' + '▮'.repeat(lv.diff)) : 'LOCKED'}</div>
+      </div>
+      <div class="lv-stars">${unlocked ? stars : ''}</div>
+      ${unlocked ? '' : '<div class="lv-lock">🔒</div>'}`;
+    if (unlocked) {
+      el.addEventListener('click', () => { sfx.click(); openLevel(i); });
+    }
+    list.appendChild(el);
+  });
+  $('#hudScore').textContent = totalScore();
+  $('#hudRank').textContent = rankOf(totalScore());
+  $('#hudProg').textContent = Object.keys(state.done).length + '/' + LEVELS.length;
+}
+
+/* ---------- challenge panel ---------- */
+function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+function openLevel(i) {
+  currentLevel = i;
+  hideStamp();
+  const lv = LEVELS[i];
+  const done = state.done[lv.id];
+  const body = $('#chBody');
+
+  let html = `
+    <div class="ch-head">
+      <div class="ch-num">${pad(i + 1, 2)}</div>
+      <div>
+        <div class="ch-title">${lv.zh}</div>
+        <div style="color:var(--muted);letter-spacing:2px;font-size:12px">${lv.codename}</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="ch-tag ${lv.diff >= 4 ? 'boss' : lv.diff >= 3 ? 'hard' : ''}">${'DIFF ' + lv.diff} ${'▮'.repeat(lv.diff)}</div>
+    </div>
+    <div class="ch-brief">${lv.brief}</div>
+    <div class="ch-code">${lv.code}</div>`;
+
+  if (done) {
+    html += `
+      <div class="done-banner">
+        <span>✓ CRACKED — ${escHtml(lv.successMsg)}</span>
+        <span class="chip">★ ${done.stars}/3 · 尝试 ${done.attempts} · 提示扣 ${done.hintCost}</span>
+        <button class="btn ghost" id="btnReplay">重新挑战</button>
+      </div>
+      <div class="ch-input-row">
+        <input class="ch-input" id="chInput" placeholder="${done ? '已破解 — 可输入任意内容' : '输入你的答案…'}" disabled>
+        <button class="btn" id="btnSubmit" disabled>提交</button>
+      </div>`;
+  } else {
+    html += `
+      <div class="ch-input-row">
+        <input class="ch-input" id="chInput" placeholder="输入你的答案 / serial / flag…" autocomplete="off" spellcheck="false">
+        <button class="btn" id="btnSubmit">提交 ▸</button>
+        <button class="btn warn" id="btnHint">提示</button>
+      </div>
+      <div class="feedback" id="chFeedback"></div>
+      <div class="hints" id="chHints"></div>`;
+  }
+  body.innerHTML = html;
+
+  const input = $('#chInput');
+  if (input && !done) {
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+    input.addEventListener('input', sfx.key);
+    if (!levelStartAt[lv.id]) levelStartAt[lv.id] = Date.now();
+  }
+  const btnSub = $('#btnSubmit');
+  if (btnSub) btnSub.addEventListener('click', submit);
+  const btnHint = $('#btnHint');
+  if (btnHint) btnHint.addEventListener('click', giveHint);
+  const btnReplay = $('#btnReplay');
+  if (btnReplay) btnReplay.addEventListener('click', () => {
+    if (confirm('重新挑战将抹除本关成绩（含星级），确定？')) {
+      delete state.done[lv.id];
+      saveState(); renderList(); openLevel(i);
+      log('已重置本关成绩，重新挑战。', 'sys');
+    }
+  });
+
+  // render already-revealed hints
+  if (!done) {
+    const rec = state.done[lv.id];
+    // hints stored transiently per level in state.hints[lv.id]
+    const revealed = (state.hints && state.hints[lv.id]) || 0;
+    for (let k = 0; k < revealed; k++) addHintLine(k, true);
+  }
+
+  // side effects
+  if (lv.onActivate && !done) {
+    try { lv.onActivate((m, c) => log(m, c || '')); } catch (e) {}
+  }
+  renderList();
+  $('#chPanelTitle').innerHTML = `CHALLENGE ${pad(i + 1, 2)}/${pad(LEVELS.length, 2)} <small>${lv.codename}</small>`;
+}
+
+function addHintLine(idx, silent = false) {
+  const lv = LEVELS[currentLevel];
+  const box = $('#chHints');
+  if (!box) return;
+  const d = document.createElement('div');
+  d.className = 'hint-line';
+  d.innerHTML = `<b>HINT ${idx + 1} (−${lv.hintCost[idx]}分):</b> ${lv.hint[idx]}`;
+  box.appendChild(d);
+  if (!silent) sfx.hint();
+}
+function giveHint() {
+  const lv = LEVELS[currentLevel];
+  if (state.done[lv.id]) return;
+  if (!state.hints) state.hints = {};
+  const revealed = state.hints[lv.id] || 0;
+  if (revealed >= lv.hint.length) { toast('没有更多提示了。剩下的靠你自己。', true); return; }
+  state.hints[lv.id] = revealed + 1;
+  saveState();
+  addHintLine(revealed);
+  log(`HINT ${revealed + 1} 已解封 (−${lv.hintCost[revealed]} 分)。`, 'sys');
+  typeLog(`hint_channel::leak() → level_${currentLevel + 1} …`, 'dim', 8);
+}
+
+function submit() {
+  const lv = LEVELS[currentLevel];
+  const input = $('#chInput');
+  const fb = $('#chFeedback');
+  if (!input || input.disabled) return;
+  const val = input.value;
+  if (!val.trim()) { fb.className = 'feedback info'; fb.textContent = '>> 输入为空。连空串都敢提交，胆子不小。'; sfx.deny(); return; }
+
+  let ok = false;
+  try { ok = !!lv.check(val); } catch (e) { ok = false; }
+
+  if (ok) {
+    // score
+    const hintUsed = (state.hints && state.hints[lv.id]) || 0;
+    const hintCost = lv.hintCost.slice(0, hintUsed).reduce((a, b) => a + b, 0);
+    const attempts = (state._attempts && state._attempts[lv.id] || 0) + 1;
+    state.done[lv.id] = { stars: starsOf(hintUsed), attempts, hintCost, ts: Date.now() };
+    state.unlocked = Math.max(state.unlocked, Math.min(currentLevel + 2, LEVELS.length));
+    const secs = levelStartAt[lv.id] ? Math.round((Date.now() - levelStartAt[lv.id]) / 1000) : 0;
+    saveState();
+    sfx.win();
+    showStamp('ACCESS GRANTED');
+    input.disabled = true; $('#btnSubmit').disabled = true;
+    fb.className = 'feedback good';
+    fb.textContent = '>> ' + lv.successMsg;
+    // score pop
+    const pop = document.createElement('div');
+    pop.className = 'scorepop';
+    pop.textContent = '+' + (lv.score - hintCost);
+    document.body.appendChild(pop);
+    setTimeout(() => pop.remove(), 1500);
+
+    typeLog(`crack_target(level_${pad(currentLevel + 1, 2)}) :: SIGIL VERIFIED`, 'ok', 14);
+    log(`ACCESS GRANTED — ${lv.zh} 已破解 (+${lv.score - hintCost} 分, ${starsOf(hintUsed) && '★'.repeat(starsOf(hintUsed))} , 用时 ${secs}s)`, 'ok');
+    if (currentLevel + 1 < LEVELS.length) {
+      log(`新关卡已解锁: ${LEVELS[currentLevel + 1].zh} · ${LEVELS[currentLevel + 1].codename}`, 'sys');
+    } else {
+      typeLog('=== ALL MISSIONS COMPLETE === 系统向你敬礼。', 'ok', 20);
+      toast('全部 6 关破解完成！你是 CR4CKM3 M4ST3R。', true);
+    }
+    setTimeout(() => { renderList(); openLevel(currentLevel); }, 1400);
+  } else {
+    state._attempts = state._attempts || {};
+    state._attempts[lv.id] = (state._attempts[lv.id] || 0) + 1;
+    saveState();
+    sfx.deny();
+    input.classList.remove('denied'); void input.offsetWidth; input.classList.add('denied');
+    const n = state._attempts[lv.id];
+    const mocks = [
+      'ACCESS DENIED — 钥匙不对，门纹丝不动。',
+      'ACCESS DENIED — 锁芯发出一声冷笑。',
+      'ACCESS DENIED — 门后传来翻白眼的声音。',
+      'ACCESS DENIED — 再想想，答案就在你眼前。'
+    ];
+    fb.className = 'feedback bad';
+    fb.textContent = `>> ${mocks[Math.min(n - 1, mocks.length - 1)]} (第 ${n} 次尝试)`;
+    log(`deny(level_${pad(currentLevel + 1, 2)}, "${escHtml(val.slice(0, 24))}${val.length > 24 ? '…' : ''}") → RET ${n}`, 'err');
+  }
+}
+
+/* ---------- matrix rain ---------- */
+(function matrixRain() {
+  const cv = $('#matrix'), cx = cv.getContext('2d');
+  let W, H, drops, cols;
+  const FS = 15;
+  const CHARS = 'アイウエオカキクケコサシスセソ0123456789ABCDEF<>/\\{}[]$#%&';
+  function resize() {
+    W = cv.width = window.innerWidth; H = cv.height = window.innerHeight;
+    cols = Math.ceil(W / FS);
+    drops = Array.from({ length: cols }, () => Math.random() * H / FS);
+  }
+  window.addEventListener('resize', resize); resize();
+  let running = true;
+  document.addEventListener('visibilitychange', () => { running = !document.hidden; });
+  setInterval(() => {
+    if (!running) return;
+    cx.fillStyle = 'rgba(4,7,10,0.09)';
+    cx.fillRect(0, 0, W, H);
+    cx.font = FS + 'px "Share Tech Mono", monospace';
+    for (let i = 0; i < cols; i++) {
+      const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+      const x = i * FS, y = drops[i] * FS;
+      cx.fillStyle = Math.random() < 0.06 ? '#bfffd0' : '#1d7a3f';
+      cx.fillText(ch, x, y);
+      if (y > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }, 55);
+})();
+
+/* ---------- konami easter egg ---------- */
+(function konami() {
+  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let idx = 0;
+  window.addEventListener('keydown', e => {
+    idx = (e.key === seq[idx]) ? idx + 1 : (e.key === seq[0] ? 1 : 0);
+    if (idx === seq.length) {
+      idx = 0;
+      toast('↑↑↓↓←→←→BA — 彩蛋：GREETINGS, FELLOW AGENT.', true);
+      log('konami_accepted() → 洪流般的敬意已送达。', 'sys');
+      sfx.win();
+    }
+  });
+})();
+
+/* ---------- boot ---------- */
+$('#btnMute').addEventListener('click', () => {
+  state.mute = !state.mute; saveState();
+  $('#btnMute').textContent = state.mute ? '♪ SFX:OFF' : '♪ SFX:ON';
+  if (!state.mute) sfx.click();
+});
+$('#btnReset').addEventListener('click', () => {
+  if (confirm('确定要清空全部进度、分数与星级吗？此操作不可撤销。')) {
+    state = { done: {}, unlocked: 1, mute: state.mute };
+    saveState();
+    currentLevel = 0; levelStartAt = {};
+    renderList(); openLevel(0);
+    log('系统已重置。欢迎回来，菜鸟。', 'err');
+    toast('进度已重置。', true);
+  }
+});
+$('#btnStart').addEventListener('click', () => {
+  $('#intro').classList.add('hidden');
+  try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+  sfx.win();
+  bootLog();
+});
+$('#logo').addEventListener('click', () => {
+  toast('CRACK.ME v2.7 — 6 missions / 600 pts / offline.', true);
+});
+
+async function bootLog() {
+  await typeLog('booting crackme.sys v2.7 ...', 'dim', 10);
+  await typeLog('mounting /dev/challenges ... 6 targets found', 'dim', 6);
+  await typeLog('intel: 所有逻辑都在前端。源码即战场。', 'sys', 14);
+  log('READY. 选择左侧关卡开始入侵。', 'ok');
+}
+
+(function init() {
+  $('#btnMute').textContent = state.mute ? '♪ SFX:OFF' : '♪ SFX:ON';
+  // find first uncompleted level
+  currentLevel = 0;
+  for (let i = 0; i < LEVELS.length; i++) {
+    if (!state.done[LEVELS[i].id]) { currentLevel = i; break; }
+    if (i === LEVELS.length - 1) currentLevel = i;
+  }
+  state.hints = state.hints || {};
+  renderList();
+  openLevel(currentLevel);
+  log('session init — user agent connected.', 'dim');
+
+  const seen = (() => { try { return localStorage.getItem(SEEN_KEY); } catch (e) { return null; } })();
+  if (seen) { $('#intro').classList.add('hidden'); bootLog(); }
+  else {
+    // intro typing
+    const el = $('#introType');
+    const msg = 'root@crackme:~$ ./connect --agent=anonymous';
+    let i = 0;
+    const t = setInterval(() => {
+      el.textContent = msg.slice(0, ++i);
+      if (i >= msg.length) clearInterval(t);
+    }, 34);
+  }
+})();
+</script>
 </body>
 </html>
