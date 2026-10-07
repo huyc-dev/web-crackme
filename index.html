@@ -2,901 +2,320 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-sjP9+zoPayVakgoSLo3NKRxuaDxMnvx7Gc9fGISRuTw='; style-src 'sha256-dwjeI+gdMjhQaaA9bBVpf8JaiNPK4L49eWtHj6iameE='; img-src data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRACK.ME // WEB REVERSING LAB</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#101018">
+<title>CRACK.ME / Web Reversing Lab</title>
 <style>
-:root{
-  --bg:#04070a;
-  --panel:#0a120dcc;
-  --panel-solid:#0a120d;
-  --line:#16381f;
-  --line-hi:#2a5c33;
-  --ph:#39ff6e;
-  --ph-dim:#1d7a3f;
-  --ph-faint:#0f4a26;
-  --amber:#ffb340;
-  --red:#ff4d4d;
-  --cyan:#4dd8ff;
-  --text:#c8ffd8;
-  --muted:#5d8f70;
-  --font-display:'VT323', 'Courier New', monospace;
-  --font-mono:'Share Tech Mono', 'Courier New', monospace;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--font-mono);
-  font-size:15px;
-  line-height:1.55;
-  overflow-x:hidden;
-}
-::selection{background:var(--ph);color:#000}
+:root{color-scheme:dark;--bg:#101018;--panel:#181822;--panel2:#20202c;--ink:#efedf5;--muted:#a19bae;--line:#36323f;--violet:#b99aff;--orange:#ffb75e;--pink:#ff7fa2;--mint:#98e4c6;--mono:Consolas,'SFMono-Regular','Liberation Mono',monospace;--sans:Inter,'Segoe UI','Microsoft YaHei',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 var(--sans);min-height:100vh}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--orange);outline-offset:4px}::selection{background:var(--violet);color:var(--bg)}
+.ambient{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 88% 0%,#48316442,transparent 45%),radial-gradient(ellipse at 0 80%,#6d412a20,transparent 45%);z-index:-1}.shell{max-width:1540px;margin:auto;padding:0 42px 26px}.topbar{height:88px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px}.brand{display:flex;gap:12px;align-items:center;border:0;background:transparent;color:var(--ink);padding:0;text-align:left}.brand-symbol{display:grid;place-items:center;width:38px;height:38px;background:var(--violet);color:#14101d;font:bold 23px var(--mono);clip-path:polygon(0 0,72% 0,100% 28%,100% 100%,28% 100%,0 72%)}.brand-name{font:800 19px/1.3 var(--sans);letter-spacing:4px}.brand-sub{display:block;font:10px var(--mono);letter-spacing:2px;color:var(--muted);margin-top:3px}.connection{font:11px var(--mono);letter-spacing:1px;color:var(--mint);margin-left:auto;display:flex;align-items:center;gap:8px}.dot{width:6px;height:6px;background:var(--mint);border-radius:50%;box-shadow:0 0 12px #98e4c650}.top-actions{display:flex;gap:8px;margin-left:14px}.btn{border:1px solid var(--line);background:transparent;padding:9px 14px;color:var(--ink);font:12px var(--mono);letter-spacing:.4px;transition:background .15s,border-color .15s}.btn:hover{border-color:var(--violet);background:#b99aff12}.btn.primary{background:var(--orange);border-color:var(--orange);color:#211509;font-weight:bold}.btn.primary:hover{background:#ffc985}.btn.accent{color:var(--violet)}.btn.danger{color:var(--pink)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center;padding:35px 0 28px}.eyebrow{font:11px var(--mono);color:var(--violet);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:9px}.eyebrow::before{content:'';width:21px;height:1px;background:var(--violet)}h1{margin:10px 0 8px;font-size:clamp(30px,3.4vw,49px);font-weight:650;letter-spacing:-1.5px;line-height:1.2}h1 span{color:var(--orange)}.hero p{color:var(--muted);margin:0;font-size:13px}.stats{display:flex;gap:28px;padding:18px 23px;border:1px solid var(--line);background:#18182280}.stat-label{font:10px var(--mono);letter-spacing:1.5px;color:var(--muted)}.stat-value{font:32px/1.4 var(--mono);color:var(--ink)}.stat-value small{font-size:13px;color:var(--muted)}.stat-rank{color:var(--orange);font:12px var(--mono);margin-top:13px}.progress-track{height:3px;width:84px;background:var(--line);display:flex;gap:3px;margin-top:3px}.progress-segment{height:3px;flex:1;background:var(--line)}.progress-segment.on{background:var(--violet)}
+.workspace{display:grid;grid-template-columns:254px minmax(0,1fr);gap:24px}.sidebar{border:1px solid var(--line);align-self:start;background:#17171fc9}.section-title{font:10px var(--mono);letter-spacing:1.5px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid var(--line)}.live-mark{color:var(--orange)}.mission{position:relative;display:flex;align-items:center;gap:12px;width:100%;border:0;border-bottom:1px solid #36323f90;background:transparent;color:var(--ink);text-align:left;padding:18px 16px;transition:background .15s}.mission:last-child{border-bottom:0}.mission:hover:not(:disabled){background:#b99aff0c}.mission.active{background:#b99aff12}.mission.active::before{content:'';position:absolute;left:-1px;top:15px;bottom:15px;width:3px;background:var(--violet)}.mission:disabled{opacity:.4}.mission-index{font:12px var(--mono);color:var(--muted);border:1px solid var(--line);width:29px;height:29px;display:grid;place-items:center;flex-shrink:0}.mission.active .mission-index{color:var(--violet);border-color:#b99aff55}.mission.done .mission-index{border-color:#98e4c650;color:var(--mint)}.mission-copy{min-width:0;flex:1}.mission-name{font-size:13px;font-weight:600}.mission-code{font:9px var(--mono);color:var(--muted);display:block;margin-top:4px;letter-spacing:.5px}.mission-meta{font:10px var(--mono);color:var(--orange);margin-top:5px}.mission-lock{font:9px var(--mono);color:var(--muted)}.side-note{padding:18px;border-top:1px solid var(--line);font:10px/1.85 var(--mono);color:var(--muted)}.side-note strong{display:block;color:var(--violet);font-weight:normal;letter-spacing:1px;margin-bottom:5px}.right-column{min-width:0}.challenge{border:1px solid var(--line);background:#181822d9;position:relative}.challenge-top{padding:15px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;font:10px var(--mono);color:var(--muted);letter-spacing:1px}.challenge-top .path{color:var(--violet)}.difficulty{color:var(--orange);border:1px solid #ffb75e40;padding:3px 8px;white-space:nowrap}.challenge-inner{padding:25px 28px 28px}.mission-heading{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.mission-heading h2{font-size:28px;line-height:1.2;letter-spacing:1px;margin:7px 0 0;font-weight:600}.large-index{font:64px/.95 var(--mono);color:#514761;letter-spacing:-4px;user-select:none}.brief{color:#c4becf;margin:19px 0 22px;font-size:14px;line-height:1.9;max-width:850px}em{font-style:normal;color:var(--orange)}.source{border:1px solid var(--line);background:#111119}.source-bar{padding:9px 15px;display:flex;gap:15px;align-items:center;font:10px var(--mono);color:var(--muted);border-bottom:1px solid var(--line)}.source-bar span:first-child{color:var(--violet)}.source-bar span:last-child{margin-left:auto}.source pre{margin:0;padding:20px;font:13px/1.85 var(--mono);color:#d0c8df;white-space:pre;overflow-x:auto;tab-size:2}.hl-c{color:#827c90}.hl-k{color:var(--pink)}.hl-s{color:var(--orange)}.hl-f{color:var(--violet)}.answer-label{font:10px var(--mono);color:var(--muted);letter-spacing:1px;margin:22px 0 8px;display:flex;justify-content:space-between}.answer-row{display:flex;gap:10px}.input-shell{display:flex;align-items:center;gap:12px;flex:1;border:1px solid #615473;background:#111119;padding:0 14px;min-width:0}.input-shell:focus-within{border-color:var(--violet);box-shadow:0 0 0 2px #b99aff12}.prompt-symbol{color:var(--violet);font:16px var(--mono)}.answer-input{background:transparent;color:var(--ink);border:0;width:100%;min-width:0;padding:13px 0;font:14px var(--mono);outline:none}.answer-input:focus-visible{outline:0}.answer-input::placeholder{color:#82798e}.answer-row .btn{padding:12px 20px}.feedback{min-height:26px;margin:10px 0 0;font:12px/1.7 var(--mono);color:var(--muted);overflow-wrap:anywhere}.feedback.good{color:var(--mint)}.feedback.bad{color:var(--pink)}.feedback.info{color:var(--orange)}.hint-block{margin-top:10px;border-left:2px solid var(--orange);background:#ffb75e08;padding:12px 15px;color:#d9c8b4;font-size:12px;overflow-wrap:anywhere}.hint-block b{color:var(--orange);display:block;font:11px var(--mono);margin-bottom:6px}.challenge-tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:13px}.attempt-info{font:10px var(--mono);color:var(--muted)}.done-banner{border:1px solid #98e4c638;background:#98e4c608;padding:15px 18px;margin-top:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.done-banner strong{color:var(--mint);font:12px var(--mono)}.done-detail{color:var(--muted);font:11px var(--mono)}.done-banner .btn{margin-left:auto}.complete-note{color:var(--orange);margin:15px 0 0;font:12px var(--mono)}
+.terminal{margin-top:18px;border:1px solid var(--line);background:#121219}.terminal summary{padding:12px 18px;cursor:pointer;color:var(--muted);font:10px var(--mono);letter-spacing:1px;list-style:none;display:flex;align-items:center;gap:12px}.terminal summary::-webkit-details-marker{display:none}.terminal summary::before{content:'+';color:var(--violet);font-size:17px}.terminal[open] summary::before{content:'−'}.terminal summary span:last-child{margin-left:auto;color:var(--violet)}.log-body{height:170px;overflow-y:auto;border-top:1px solid var(--line);padding:13px 18px;font:11px/1.9 var(--mono);scrollbar-color:#544a65 #121219;scrollbar-width:thin}.log-line{white-space:pre-wrap;overflow-wrap:anywhere;color:#aea3bf}.log-time{color:#82768e;margin-right:12px}.log-line.ok{color:var(--mint)}.log-line.err{color:var(--pink)}.log-line.sys{color:var(--orange)}.log-line.dim{color:#91859f}.footer{border-top:1px solid var(--line);margin-top:30px;padding-top:17px;display:flex;justify-content:space-between;gap:15px;color:var(--muted);font:10px var(--mono);letter-spacing:.5px}.footer span:last-child{color:var(--violet)}
+.intro{position:fixed;inset:0;z-index:30;background:#0c0c14e8;backdrop-filter:blur(12px);display:grid;place-items:center;padding:24px}.intro-box{width:min(630px,100%);border:1px solid #7d648e;background:#191720;padding:42px;position:relative;box-shadow:0 25px 120px #0009}.intro-box::before{content:'';position:absolute;top:-1px;left:-1px;width:80px;height:3px;background:var(--orange)}.intro-number{font:10px var(--mono);color:var(--muted);letter-spacing:2px;display:flex;justify-content:space-between}.intro h2{font-size:44px;line-height:1.08;letter-spacing:-1px;margin:28px 0 20px}.intro h2 span{color:var(--violet)}.intro-desc{color:var(--muted);font-size:14px;line-height:1.9}.intro-rules{list-style:none;padding:0;margin:23px 0 28px;display:grid;gap:12px}.intro-rules li{font-size:13px;color:#d2c9dd;display:flex;gap:14px}.intro-rules li::before{content:attr(data-num);color:var(--orange);font:11px var(--mono);padding-top:3px}.intro-type{font:11px var(--mono);color:var(--violet);min-height:22px;margin-bottom:17px}.intro .btn{width:100%;padding:15px;font-size:13px}.intro-bottom{font:9px var(--mono);color:var(--muted);margin-top:16px;text-align:center;letter-spacing:1px}.hidden{display:none!important}.toasts{position:fixed;bottom:24px;right:24px;z-index:40;display:flex;flex-direction:column;gap:8px;max-width:min(370px,calc(100vw - 36px));pointer-events:none}.toast{padding:14px 18px;background:#25202f;border:1px solid #77638f;border-left:3px solid var(--violet);color:var(--ink);font:12px/1.6 var(--mono);box-shadow:0 10px 30px #0006;animation:toastIn .2s ease}.toast.amber{border-left-color:var(--orange)}.scorepop{position:fixed;top:32%;left:50%;z-index:20;pointer-events:none;color:var(--orange);font:52px var(--mono);animation:scoreFloat 1.35s both}.stamp{position:absolute;right:25px;top:78px;background:var(--mint);color:#15251f;padding:8px 14px;font:bold 12px var(--mono);letter-spacing:2px;transform:rotate(4deg);pointer-events:none;animation:stampIn .2s ease}.pulse{animation:deny .25s ease}.radar{width:70px;height:70px;border:1px solid #524666;border-radius:50%;position:relative;flex-shrink:0;margin-left:20px;background:repeating-radial-gradient(circle,transparent 0 10px,#b99aff12 10px 11px,transparent 11px 21px)}.radar::before{content:'';position:absolute;inset:8px;border-radius:50%;background:conic-gradient(from 0deg,transparent 270deg,#b99aff50 360deg);animation:sweep 9s linear infinite}.radar::after{content:'';position:absolute;top:20px;right:16px;width:4px;height:4px;background:var(--orange);border-radius:50%;box-shadow:0 0 8px var(--orange)}@keyframes sweep{to{transform:rotate(360deg)}}@keyframes toastIn{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes scoreFloat{0%{transform:translate(-50%,15px);opacity:0}20%,70%{opacity:1}100%{transform:translate(-50%,-55px);opacity:0}}@keyframes stampIn{from{opacity:0;transform:rotate(4deg) scale(1.2)}to{opacity:1;transform:rotate(4deg) scale(1)}}@keyframes deny{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@media(min-width:1400px){.challenge-inner{padding:28px 34px 30px}.source pre{font-size:14px}}@media(max-width:1050px){.shell{padding:0 24px 22px}.hero{gap:18px}.stats{gap:20px;padding:16px}.radar{display:none}.workspace{grid-template-columns:220px minmax(0,1fr);gap:18px}.challenge-inner{padding:22px}.answer-row{flex-wrap:wrap}.input-shell{flex-basis:100%}.answer-row .btn{flex:1}}@media(max-width:740px){.shell{padding:0 16px 20px}.topbar{height:77px;gap:8px}.brand-name{font-size:16px;letter-spacing:2px}.brand-sub{font-size:8px;letter-spacing:1px}.brand-symbol{width:31px;height:31px}.connection{display:none}.top-actions{margin-left:auto;gap:5px}.top-actions .btn{font-size:10px;padding:8px}.hero{display:block;padding:26px 0 22px}.hero h1{font-size:34px}.hero p{font-size:12px}.stats{margin-top:21px;justify-content:space-between}.stat-value{font-size:27px}.workspace{display:block}.sidebar{margin-bottom:17px}.section-title{padding:12px 15px}.mission-list{display:grid;grid-template-columns:repeat(3,1fr)}.mission{padding:12px 8px;gap:7px;align-items:flex-start;border-right:1px solid #36323f90}.mission-index{width:22px;height:22px;font-size:10px}.mission-name{font-size:11px}.mission-code,.mission-lock{display:none}.mission-meta{font-size:9px}.side-note{display:none}.challenge-top{padding:12px 15px;font-size:9px;letter-spacing:0}.challenge-inner{padding:21px 16px}.mission-heading h2{font-size:25px}.large-index{font-size:51px}.brief{font-size:13px}.source pre{padding:16px;font-size:12px}.answer-row .btn{padding:11px 14px}.challenge-tools{flex-wrap:wrap}.footer{font-size:9px;flex-wrap:wrap}.intro-box{padding:27px}.intro h2{font-size:36px}.intro-rules li{font-size:12px}.done-banner .btn{margin-left:0}.stamp{right:15px;top:67px;font-size:9px}.terminal summary{font-size:9px}.toasts{bottom:16px;right:16px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}}
 
-/* ---------- ambient layers ---------- */
-#matrix{position:fixed;inset:0;z-index:0;opacity:.14;pointer-events:none}
-.scanlines{position:fixed;inset:0;z-index:3;pointer-events:none;
-  background:repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
-  mix-blend-mode:multiply}
-.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%)}
-.flicker{position:fixed;inset:0;z-index:4;pointer-events:none;background:rgba(57,255,110,.02);
-  animation:flick 4s infinite steps(1)}
-@keyframes flick{
-  0%,96%{opacity:0}97%{opacity:.5}98%{opacity:.1}99%{opacity:.6}100%{opacity:0}
-}
-@media (prefers-reduced-motion: reduce){
-  .flicker{display:none}
-}
-
-/* ---------- shell ---------- */
-.shell{position:relative;z-index:5;max-width:1460px;margin:0 auto;padding:18px 22px 40px;display:flex;flex-direction:column;min-height:100vh}
-
-header.top{
-  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-  border:1px solid var(--line);background:var(--panel);
-  padding:12px 18px;margin-bottom:16px;box-shadow:0 0 24px rgba(57,255,110,.06), inset 0 0 40px rgba(57,255,110,.03);
-  position:relative;
-}
-header.top::after{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--ph-dim),transparent)}
-.logo{font-family:var(--font-display);font-size:42px;line-height:.9;letter-spacing:2px;color:var(--ph);text-shadow:0 0 12px rgba(57,255,110,.55);position:relative;cursor:default;user-select:none}
-.logo .dot{color:var(--amber);text-shadow:0 0 10px rgba(255,179,64,.6)}
-.logo-glitch{position:absolute;inset:0;color:var(--red);clip-path:inset(30% 0 55% 0);animation:glitch1 3.4s infinite steps(1);opacity:.8;pointer-events:none}
-.logo-glitch2{position:absolute;inset:0;color:var(--cyan);clip-path:inset(60% 0 25% 0);animation:glitch2 2.7s infinite steps(1);opacity:.7;pointer-events:none}
-@keyframes glitch1{0%,92%{transform:none;opacity:0}93%{transform:translate(-3px,1px);opacity:.8}95%{transform:translate(2px,-1px);opacity:.6}97%{transform:none;opacity:0}}
-@keyframes glitch2{0%,89%{transform:none;opacity:0}90%{transform:translate(3px,-1px);opacity:.7}93%{transform:none;opacity:0}}
-.ver{font-size:12px;color:var(--muted);letter-spacing:1px}
-.spacer{flex:1}
-.chip{
-  border:1px solid var(--line-hi);padding:6px 12px;font-size:13px;color:var(--text);
-  background:rgba(57,255,110,.04);display:inline-flex;align-items:center;gap:8px;white-space:nowrap
-}
-.chip b{color:var(--ph);font-weight:normal;text-shadow:0 0 8px rgba(57,255,110,.5)}
-.chip.amber b{color:var(--amber);text-shadow:0 0 8px rgba(255,179,64,.5)}
-button.btn{
-  font-family:var(--font-mono);font-size:14px;letter-spacing:1px;cursor:pointer;
-  background:rgba(57,255,110,.06);color:var(--ph);border:1px solid var(--line-hi);
-  padding:8px 16px;transition:all .15s;position:relative
-}
-button.btn:hover{background:rgba(57,255,110,.16);box-shadow:0 0 14px rgba(57,255,110,.35);text-shadow:0 0 6px rgba(57,255,110,.8)}
-button.btn:active{transform:translateY(1px)}
-button.btn.ghost{color:var(--muted);border-color:var(--line)}
-button.btn.ghost:hover{color:var(--text);box-shadow:none;background:rgba(255,255,255,.04)}
-button.btn.warn{color:var(--amber);border-color:#5c421a}
-button.btn.warn:hover{background:rgba(255,179,64,.1);box-shadow:0 0 14px rgba(255,179,64,.3)}
-
-/* ---------- layout ---------- */
-.layout{display:grid;grid-template-columns:270px minmax(0,1fr) 350px;gap:16px;align-items:start;flex:1}
-@media (max-width:1180px){.layout{grid-template-columns:250px minmax(0,1fr)}.terminal-wrap{grid-column:1/-1}}
-@media (max-width:820px){.layout{grid-template-columns:1fr}}
-
-.panel{border:1px solid var(--line);background:var(--panel);box-shadow:0 0 20px rgba(0,0,0,.5), inset 0 0 60px rgba(57,255,110,.02);position:relative}
-.panel-title{
-  font-family:var(--font-display);font-size:20px;letter-spacing:2px;color:var(--ph-dim);
-  padding:8px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;
-  text-transform:uppercase
-}
-.panel-title small{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:1px}
-
-/* ---------- level list ---------- */
-.lv-list{display:flex;flex-direction:column}
-.lv-item{
-  display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;
-  border-bottom:1px solid var(--line);border-left:3px solid transparent;transition:all .15s;background:transparent
-}
-.lv-item:last-child{border-bottom:none}
-.lv-item:hover{background:rgba(57,255,110,.06)}
-.lv-item.active{border-left-color:var(--ph);background:rgba(57,255,110,.09)}
-.lv-item.locked{cursor:not-allowed;opacity:.38}
-.lv-item.done .lv-name{color:var(--ph)}
-.lv-idx{font-family:var(--font-display);font-size:22px;color:var(--muted);width:30px;text-align:center}
-.lv-item.done .lv-idx{color:var(--ph);text-shadow:0 0 8px rgba(57,255,110,.6)}
-.lv-meta{flex:1;min-width:0}
-.lv-name{font-size:14px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lv-sub{font-size:11px;color:var(--muted);letter-spacing:1px}
-.lv-stars{font-size:12px;color:var(--amber);letter-spacing:2px;min-width:44px;text-align:right}
-.lv-lock{color:var(--muted);font-size:13px}
-
-/* ---------- challenge ---------- */
-.ch-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:16px 18px 4px}
-.ch-num{font-family:var(--font-display);font-size:56px;line-height:.8;color:var(--ph-faint);text-shadow:0 0 18px rgba(57,255,110,.15)}
-.ch-title{font-family:var(--font-display);font-size:32px;letter-spacing:2px;color:var(--ph);text-shadow:0 0 10px rgba(57,255,110,.4)}
-.ch-tag{font-size:11px;color:var(--amber);border:1px solid #5c421a;padding:2px 8px;letter-spacing:2px}
-.ch-tag.hard{color:var(--red);border-color:#5c1a1a}
-.ch-tag.boss{color:var(--cyan);border-color:#1a4a5c}
-.ch-brief{padding:6px 18px 14px;color:var(--muted);font-size:14px;max-width:70ch}
-.ch-brief em{color:var(--amber);font-style:normal}
-.ch-code{
-  margin:0 18px 14px;border:1px solid var(--line);background:#050b07;padding:14px 16px;
-  font-size:13.5px;overflow-x:auto;white-space:pre;color:#9fe8b5;position:relative
-}
-.ch-code::before{content:"// SOURCE";position:absolute;top:4px;right:8px;font-size:10px;color:var(--ph-faint);letter-spacing:2px}
-.ch-code .hl-c{color:#4f7f60}
-.ch-code .hl-k{color:var(--amber)}
-.ch-code .hl-s{color:var(--ph)}
-.ch-code .hl-f{color:var(--cyan)}
-.ch-input-row{display:flex;gap:10px;padding:0 18px 14px;flex-wrap:wrap}
-.ch-input{
-  flex:1;min-width:220px;font-family:var(--font-mono);font-size:16px;letter-spacing:1px;
-  background:#050b07;border:1px solid var(--line-hi);color:var(--ph);padding:11px 14px;outline:none;
-  transition:all .15s
-}
-.ch-input:focus{border-color:var(--ph);box-shadow:0 0 14px rgba(57,255,110,.25)}
-.ch-input.denied{animation:shake .35s;border-color:var(--red);box-shadow:0 0 14px rgba(255,77,77,.3)}
-.ch-input:disabled{opacity:.4}
-@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
-.feedback{min-height:22px;padding:0 18px 8px;font-size:14px}
-.feedback.bad{color:var(--red)}
-.feedback.good{color:var(--ph)}
-.feedback.info{color:var(--amber)}
-.hints{padding:0 18px 16px;display:flex;flex-direction:column;gap:8px}
-.hint-line{border-left:3px solid var(--amber);background:rgba(255,179,64,.05);padding:8px 12px;font-size:13px;color:#d9c08a}
-.hint-line b{color:var(--amber)}
-.ch-foot{display:flex;gap:10px;padding:0 18px 18px;flex-wrap:wrap}
-.stamp{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:8;
-  pointer-events:none;
-}
-.stamp span{
-  font-family:var(--font-display);font-size:88px;letter-spacing:6px;color:var(--ph);
-  border:4px solid var(--ph);padding:6px 30px;transform:rotate(-8deg);
-  text-shadow:0 0 30px rgba(57,255,110,.8);box-shadow:0 0 40px rgba(57,255,110,.4), inset 0 0 30px rgba(57,255,110,.2);
-  background:rgba(4,12,7,.82);animation:stampIn .45s cubic-bezier(.2,2.2,.4,1) both
-}
-.stamp span.red{color:var(--red);border-color:var(--red);text-shadow:0 0 30px rgba(255,77,77,.8);box-shadow:0 0 40px rgba(255,77,77,.35), inset 0 0 30px rgba(255,77,77,.2)}
-@keyframes stampIn{0%{transform:rotate(-8deg) scale(2.6);opacity:0}60%{transform:rotate(-8deg) scale(.92);opacity:1}100%{transform:rotate(-8deg) scale(1);opacity:1}}
-.stamp.fade{animation:stampFade .5s .9s both}
-@keyframes stampFade{to{opacity:0;visibility:hidden}}
-.done-banner{margin:0 18px 16px;border:1px solid var(--ph-dim);background:rgba(57,255,110,.07);padding:12px 16px;color:var(--ph);font-size:14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.done-banner .btn{margin-left:auto}
-
-/* ---------- terminal ---------- */
-.terminal-wrap{position:sticky;top:16px;display:flex;flex-direction:column;max-height:calc(100vh - 40px)}
-@media (max-width:1180px){.terminal-wrap{position:static;max-height:420px}}
-.term{
-  flex:1;overflow-y:auto;padding:12px 14px;font-size:12.5px;line-height:1.7;background:#03060499;
-  scrollbar-width:thin;scrollbar-color:var(--ph-dim) transparent
-}
-.term::-webkit-scrollbar{width:6px}
-.term::-webkit-scrollbar-thumb{background:var(--ph-dim)}
-.t-line{white-space:pre-wrap;word-break:break-all;color:#79b890}
-.t-line .tp{color:var(--ph-faint)}
-.t-line.ok{color:var(--ph)}
-.t-line.err{color:var(--red)}
-.t-line.sys{color:var(--amber)}
-.t-line.dim{color:#3d6350}
-.cursor-line::after{content:"▊";color:var(--ph);animation:blink 1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-
-/* ---------- intro overlay ---------- */
-.intro{
-  position:fixed;inset:0;z-index:50;background:rgba(2,5,3,.94);backdrop-filter:blur(3px);
-  display:flex;align-items:center;justify-content:center;padding:20px
-}
-.intro.hidden{display:none}
-.intro-box{max-width:720px;width:100%;border:1px solid var(--line-hi);background:var(--panel-solid);box-shadow:0 0 60px rgba(57,255,110,.15);padding:34px 38px;position:relative}
-.intro-box::before{content:"";position:absolute;inset:6px;border:1px solid var(--line);pointer-events:none}
-.ascii{font-family:var(--font-display);color:var(--ph);font-size:15px;line-height:1.15;white-space:pre;text-shadow:0 0 14px rgba(57,255,110,.5);margin-bottom:18px;overflow-x:auto}
-.intro-rules{margin:0 0 22px;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;font-size:14px}
-.intro-rules li::before{content:"» ";color:var(--amber)}
-.intro-rules em{color:var(--amber);font-style:normal}
-.intro-type{min-height:20px;color:var(--muted);font-size:13px;margin-bottom:16px}
-
-/* ---------- toast ---------- */
-.toasts{position:fixed;right:18px;bottom:18px;z-index:60;display:flex;flex-direction:column;gap:8px}
-.toast{
-  border:1px solid var(--line-hi);background:rgba(6,14,9,.95);color:var(--ph);padding:10px 16px;font-size:13px;
-  box-shadow:0 0 20px rgba(57,255,110,.2);animation:toastIn .25s both;max-width:340px
-}
-.toast.amber{color:var(--amber);border-color:#5c421a;box-shadow:0 0 20px rgba(255,179,64,.2)}
-@keyframes toastIn{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
-
-.scorepop{position:fixed;left:50%;top:38%;transform:translateX(-50%);z-index:55;font-family:var(--font-display);font-size:56px;color:var(--amber);text-shadow:0 0 24px rgba(255,179,64,.7);pointer-events:none;animation:pop 1.4s both}
-@keyframes pop{0%{transform:translate(-50%,20px);opacity:0}20%{transform:translate(-50%,-6px);opacity:1}80%{opacity:1}100%{transform:translate(-50%,-70px);opacity:0}}
-
-footer.foot{margin-top:22px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;letter-spacing:1px}
-footer.foot .k{color:var(--ph-dim)}
+.mission-name,.mission-meta{display:block}
 </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<div class="vignette"></div>
-<div class="scanlines"></div>
-<div class="flicker"></div>
 
+<div class="ambient" aria-hidden="true"></div>
 <div class="shell">
-  <header class="top">
-    <div class="logo" id="logo">CRACK<span class="dot">.</span>ME<span class="logo-glitch">CRACK.ME</span><span class="logo-glitch2">CRACK.ME</span></div>
-    <div class="ver">WEB REVERSING LAB<br>v2.7 // OFFLINE</div>
-    <div class="spacer"></div>
-    <div class="chip">SCORE <b id="hudScore">0</b>/600</div>
-    <div class="chip amber">RANK <b id="hudRank">SCR1PT K1DD1E</b></div>
-    <div class="chip">进度 <b id="hudProg">0/6</b></div>
-    <button class="btn ghost" id="btnMute" title="切换音效">♪ SFX:ON</button>
-    <button class="btn warn" id="btnReset" title="清空所有进度">RESET</button>
+  <header class="topbar">
+    <button class="brand" id="brand" type="button" aria-label="关于 CRACK.ME"><span class="brand-symbol" aria-hidden="true">⌁</span><span><span class="brand-name">CRACK.ME</span><span class="brand-sub">REVERSE ENGINEERING DIVISION</span></span></button>
+    <div class="connection"><span class="dot"></span>JUDGING SERVICE / ONLINE</div>
+    <div class="top-actions"><button class="btn accent" id="muteButton" type="button" aria-pressed="false">SFX / ON</button><button class="btn danger" id="resetButton" type="button">RESET</button></div>
   </header>
-
-  <div class="layout">
-    <!-- left: levels -->
-    <aside class="panel">
-      <div class="panel-title">MISSIONS <small>关卡列表</small></div>
-      <div class="lv-list" id="lvList"></div>
-    </aside>
-
-    <!-- center: challenge -->
-    <main class="panel" id="chPanel" style="position:relative;overflow:hidden">
-      <div class="panel-title" id="chPanelTitle">CHALLENGE <small>挑战面板</small></div>
-      <div id="chBody"></div>
-      <div class="stamp" id="stamp" style="display:none"><span id="stampText">ACCESS GRANTED</span></div>
-    </main>
-
-    <!-- right: terminal -->
-    <div class="terminal-wrap panel">
-      <div class="panel-title">SYST3M L0G <small>tty0</small></div>
-      <div class="term" id="term"></div>
-    </div>
+  <section class="hero" aria-labelledby="siteTitle">
+    <div><div class="eyebrow">Operation 06 / Web reversing lab</div><h1 id="siteTitle">每一道锁，<span>都有破绽。</span></h1><p>追踪数据。拆解逻辑。夺回控制权。你的六项任务已就绪。</p></div>
+    <div class="stats" aria-label="挑战成绩"><div><div class="stat-label">TOTAL SCORE</div><div class="stat-value"><span id="hudScore">0</span><small> / 600</small></div><div class="stat-rank" id="hudRank">SCR1PT K1DD1E</div></div><div><div class="stat-label">MISSIONS CLEARED</div><div class="stat-value"><span id="hudProgress">0</span><small> / 06</small></div><div class="progress-track" id="progressTrack" aria-hidden="true"></div></div><div class="radar" aria-hidden="true"></div></div>
+  </section>
+  <div class="workspace">
+    <aside class="sidebar" aria-label="任务列表"><div class="section-title"><span>MISSION DIRECTORY</span><span class="live-mark">06 ENTRIES</span></div><nav class="mission-list" id="missionList"></nav><div class="side-note"><strong>// RULES OF ENGAGEMENT</strong>源码、控制台、脚本爆破<br>都是你的工具。<br><br>100 PTS / MISSION<br>NO HINTS → ★★★</div></aside>
+    <div class="right-column"><main class="challenge" id="challenge" aria-label="当前挑战"><div id="challengeBody"></div><div class="stamp hidden" id="stamp" aria-live="polite">ACCESS GRANTED</div></main>
+    <details class="terminal" open><summary><span>SESSION TELEMETRY</span><span>tty / local ↓</span></summary><div class="log-body" id="terminal" role="log" aria-label="系统日志" aria-live="off"></div></details></div>
   </div>
-
-  <footer class="foot">
-    <div><span class="k">HINT:</span> 在本实验里，按 <span class="k">F12</span> 是合法的。源码、控制台、断点——都是你的工具。</div>
-    <div>© WEB CRACKME LAB — 仅供学习逆向思维</div>
-  </footer>
+  <footer class="footer"><span>CRACK.ME © 2026 / WEB REVERSING LAB</span><span id="storageStatus">PROGRESS / CONNECTING</span><span>READ THE CODE. FIND THE SIGNAL.</span></footer>
 </div>
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle"><div class="intro-box"><div class="intro-number"><span>BRIEFING / 001</span><span>ACCESS REQUEST</span></div><h2 id="introTitle">欢迎进入<br><span>CRACK.ME。</span></h2><p class="intro-desc">六把锁，一条线路。秘密藏在题目里，成绩由判题服务验证。<br>读懂它，逆向它，然后把正确的口令交给系统。</p><ul class="intro-rules"><li data-num="01">六道任务：编码 → 算法 → 密码学 → 爆破 → 隐匿信道 → 混淆终局。</li><li data-num="02">每关 100 分。使用提示会扣分；无提示通关获得三星。</li><li data-num="03">查看源码、打开控制台、写脚本爆破，在这里全部合法。</li><li data-num="04">进度由判题服务自动保存。RESET 会清空挑战成绩。</li></ul><div class="intro-type" id="introType"></div><button class="btn primary" id="startButton" type="button">建立连接 / ENTER THE LINE →</button><div class="intro-bottom">LOCAL CLIENT · SIX MISSIONS · YOUR MOVE</div></div></div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
-<!-- intro overlay -->
-<div class="intro" id="intro">
-  <div class="intro-box">
-    <div class="ascii">
-+------------------------------------------------------+
-|   ____ ____  ____   ___   ____  _____ ____      _    |
-|  / ___|  _ \|  _ \ / _ \ / ___|_   _|  _ \    / \   |
-| | |   | |_) | |_) | | | | |     | | | |_) |  / _ \  |
-| | |___|  _ <|  _ <| |_| | |___  | | |  _ <  / ___ \ |
-|  \____|_| \_\_| \_\\___/ \____| |_| |_| \_\/_/  \_\|
-|        >>  W E B   R E V E R S I N G   L A B  <<     |
-+------------------------------------------------------+</div>
-    <ul class="intro-rules">
-      <li><em>6</em> 道关卡，层层递进：编码 → 算法 → 密码学 → 爆破 → 隐匿信道 → 混淆终局。</li>
-      <li>每关 <em>100</em> 分。使用提示会扣分并掉星：无提示通关 = <em>★★★</em>。</li>
-      <li>查看网页源码、打开控制台、写脚本爆破——在这场游戏里<em>全部合法</em>。</li>
-      <li>进度自动保存。RESET 按钮会抹掉一切，慎点。</li>
-    </ul>
-    <div class="intro-type" id="introType"></div>
-    <button class="btn" id="btnStart" style="font-size:16px;padding:12px 28px">[ 开始入侵 ]</button>
-  </div>
-</div>
-
-<div class="toasts" id="toasts"></div>
-
+<noscript>此解题网站需要启用 JavaScript 才能判题和保存进度。</noscript>
 <script>
-/*__LEVELS_START__*/
+
+(() => {
 'use strict';
-const pad = (n, w) => String(n).padStart(w, '0');
-const rot13 = s => s.replace(/[a-zA-Z]/g, c => {
-  const base = c <= 'Z' ? 65 : 97;
-  return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
-});
-
-const LEVELS = [
-  {
-    id: 'l1', zh: '明文箱子', codename: 'THE GLARING SECRET', diff: 1, score: 100,
-    brief: '每个序列号都锁在一个盒子里。奇怪的是，这个盒子的封条……<em>好读得可疑</em>。把正确的序列号交给下面这把锁。',
-    code:
-`<span class="hl-c">// vault.js — 别问我为什么这么写，前任员工写的</span>
-<span class="hl-k">const</span> SEALED = <span class="hl-s">"RTNJM0VGMy1HVTMtSjBFWVE="</span>;
-
-<span class="hl-k">function</span> <span class="hl-f">openVault</span>(key) {
-  <span class="hl-k">return</span> unseal(SEALED) === key;  <span class="hl-c">// unseal 是个秘密</span>
-}`,
-    hint: [
-      '那串字符的结尾是 "=" —— 这是 Base64 的签名。控制台里有个现成的函数叫 atob()。',
-      'atob 解出来的内容字母全乱了？试试 ROT13：每个字母在字母表里移动 13 位（它有一个特性：做两次就回到原文）。',
-      '控制台运行：const r=s=>s.replace(/[a-zA-Z]/g,c=>String.fromCharCode((c<="Z"?90:122)>=c.charCodeAt(0)?c.charCodeAt(0)+13:c.charCodeAt(0)-13)); 然后对 atob("RTNJM0VGMy1HVTMtSjBFWVE=") 的结果执行 r()。'
-    ],
-    hintCost: [10, 15, 25],
-    check(input) { return input.trim() === rot13(atob('RTNJM0VGMy1HVTMtSjBFWVE=')); },
-    successMsg: '保险箱开了。里面只有一张纸条：W3LC0ME, AGENT.'
-  },
-  {
-    id: 'l2', zh: '注册机', codename: 'KEYGEN ME', diff: 2, score: 100,
-    brief: '经典 CrackMe：用户名 <em>AGENT-1337</em> 已注册，但序列号丢了。校验算法就贴在下面——变量名被前任员工起得非常随意。写出它的注册机。',
-    code:
-`<span class="hl-c">// keygen.js — 逻辑完整可用，名字故意起得很烂</span>
-<span class="hl-k">function</span> <span class="hl-f">_v</span>(n, k) {
-  <span class="hl-k">let</span> a = 0, b = 1, c = 7;
-  <span class="hl-k">for</span> (<span class="hl-k">const</span> ch <span class="hl-k">of</span> n) {
-    <span class="hl-k">const</span> t = ch.<span class="hl-f">charCodeAt</span>(0);
-    a = (a + t) % 251;
-    b = (b * 31 + t) % 9973;
-    c = c ^ t;
+const pad=(n,w)=>String(n).padStart(w,'0');
+const q=selector=>document.querySelector(selector);
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let LEVELS=[];
+let state={revision:0,done:{},hints:{},attempts:{},cleared:[],score:0,completed:0,unlocked:1,mute:false,seen:false};
+let csrf='',ready=false,busy=false,current=0,activateTimer=null,activeChannel=null,popTimer=null,booted=false,startAt={};
+const terminal=q('#terminal');
+const unlockedCount=()=>state.unlocked;
+function syncControls(){
+  for(const selector of ['#muteButton','#resetButton','#startButton','.done-banner button']){const el=q(selector);if(el)el.disabled=!ready||busy;}
+  const lv=LEVELS[current],submitButton=q('#submitButton'),hintButton=q('#hintButton');
+  if(submitButton)submitButton.disabled=!ready||busy||!!state.done[lv.id];
+  if(hintButton)hintButton.disabled=!ready||busy||!!state.done[lv.id]||state.hints[lv.id]>=lv.hintCount;
+}
+function acceptSnapshot(data){
+  if(!data || !Array.isArray(data.levels) || data.levels.length!==6 || !data.state || typeof data.csrf!=='string')throw new Error('服务响应不完整，请重新连接。');
+  LEVELS=data.levels;state=data.state;csrf=data.csrf;ready=true;
+  q('#storageStatus').textContent='PROGRESS / SERVER SAVED';updateMute();
+}
+async function request(endpoint,payload){
+  if(busy)throw new Error('正在处理上一项操作。');
+  busy=true;syncControls();
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),10000);
+  try{
+    const options={method:payload===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,headers:{Accept:'application/json'}};
+    if(payload!==undefined){options.headers['Content-Type']='application/json';options.headers['X-CSRF-Token']=csrf;options.body=JSON.stringify({revision:state.revision,...payload});}
+    const response=await fetch(endpoint,options),data=await response.json();
+    if(data.state)acceptSnapshot(data);
+    if(!response.ok)throw new Error(data.error||'操作未完成，请重试。');
+    return data;
+  }catch(error){
+    if(error.name==='AbortError'||error instanceof TypeError)throw new Error('暂时无法连接判题服务，请确认服务正在运行后刷新。');
+    throw error;
+  }finally{clearTimeout(timeout);busy=false;syncControls();}
+}
+function actionError(error){toast(error.message,true);if(ready)openLevel(Math.min(current,unlockedCount()-1),false);}
+function node(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text !== undefined) el.textContent = String(text);
+  return el;
+}
+function button(text, className, callback) {
+  const el = node('button', 'btn ' + (className || ''), text);
+  el.type = 'button'; el.addEventListener('click', callback); return el;
+}
+// Only the original authored emphasis/highlight tokens are markup. Everything
+// else, including code operators and any persisted values, is a text node.
+function richText(parent, source, code = false) {
+  const token = code ? /<span class="(hl-[cksf])">|<\/span>/g : /<em>|<\/em>/g;
+  let cursor = 0, target = parent, match;
+  while ((match = token.exec(source)) !== null) {
+    target.appendChild(document.createTextNode(source.slice(cursor, match.index)));
+    if (match[0][1] === '/') target = parent;
+    else { const child = node(code ? 'span' : 'em', code ? match[1] : ''); parent.appendChild(child); target = child; }
+    cursor = token.lastIndex;
   }
-  <span class="hl-k">return</span> k === pad(a,3) + <span class="hl-s">"-"</span> + pad(b,4) + <span class="hl-s">"-"</span> + c.<span class="hl-f">toString</span>(16).toUpperCase().padStart(4,<span class="hl-s">"0"</span>);
-}`,
-    hint: [
-      '循环体里有三条互不干扰的运算线：a、b、c。逐字符吃进用户名的字符码。',
-      'a 是累加和取模；b 每轮乘 31 再加字符码取模（LCG 风格）；c 是异或累积。把三段的最后结果按 a-b-c 用 "-" 拼起来。',
-      '在控制台原样粘贴 _v 和 pad，再写个同样逻辑的 _g(name) 直接打印注册号即可。'
-    ],
-    hintCost: [10, 15, 25],
-    check(input) {
-      const name = 'AGENT-1337';
-      let a = 0, b = 1, c = 7;
-      for (const ch of name) {
-        const t = ch.charCodeAt(0);
-        a = (a + t) % 251;
-        b = (b * 31 + t) % 9973;
-        c = c ^ t;
-      }
-      return input.trim() === `${pad(a, 3)}-${pad(b, 4)}-${c.toString(16).toUpperCase().padStart(4, '0')}`;
-    },
-    successMsg: '注册机验证通过。AGENT-1337 已上线。'
-  },
-  {
-    id: 'l3', zh: '异或暗箱', codename: 'THE XOR BOX', diff: 2, score: 100,
-    brief: '密文已交给你，钥匙也在房间里——只是它自称 <em>"salt"</em>。把明文找出来。',
-    code:
-`<span class="hl-c">// box.js — 拦截到的传输数据</span>
-<span class="hl-k">const</span> BOX  = <span class="hl-s">"EwMLABEcf2N2Hx5qYxsdC31tenwX"</span>;
-<span class="hl-k">const</span> salt = <span class="hl-s">"K3Y-XOR-9"</span>;  <span class="hl-c">// 盐而已，谁会在意盐呢</span>
-
-<span class="hl-c">// 接收端做的事（被撕掉了，你只能看到一半）：</span>
-<span class="hl-c">//   bytes[i] = plain[i] OP salt[i % salt.length]</span>`,
-    hint: [
-      'atob(BOX) 会得到一串"乱码字节"。乱码 = 被异或过的字节。',
-      '把每个字节与 salt 循环异或：plain[i] = bytes[i] ^ salt.charCodeAt(i % salt.length)。OP 就是 XOR。',
-      '控制台：const b=[...atob("EwMLABEcf2N2Hx5qYxsdC31tenwX")].map(c=>c.charCodeAt(0)); const k="K3Y-XOR-9"; console.log(b.map((v,i)=>String.fromCharCode(v^k.charCodeAt(i%k.length))).join(""))'
-    ],
-    hintCost: [10, 15, 25],
-    check(input) {
-      const b = [...atob('EwMLABEcf2N2Hx5qYxsdC31tenwX')].map(c => c.charCodeAt(0));
-      const k = 'K3Y-XOR-9';
-      return input.trim() === b.map((v, i) => String.fromCharCode(v ^ k.charCodeAt(i % k.length))).join('');
-    },
-    successMsg: '暗箱已解。记住：XOR 不是加密——是化妆。'
-  },
-  {
-    id: 'l4', zh: '碰撞工厂', codename: 'COLLISION FACTORY', diff: 3, score: 100,
-    brief: '这个哈希函数弱得离谱，而你知道目标摘要：<em>h(x) = 40404</em>。找出任意一个 4 位字符 [A-Za-z0-9] 组成的 x，使等式成立。答案不唯一——工厂里全是碰撞。',
-    code:
-`<span class="hl-c">// weakhash.js — 值域 0..65520</span>
-<span class="hl-k">function</span> <span class="hl-f">h</span>(s) {
-  <span class="hl-k">let</span> x = 7;
-  <span class="hl-k">for</span> (<span class="hl-k">const</span> ch <span class="hl-k">of</span> s) {
-    x = (x * 131 + ch.<span class="hl-f">charCodeAt</span>(0)) % 65521;
-  }
-  <span class="hl-k">return</span> x;
+  target.appendChild(document.createTextNode(source.slice(cursor)));
 }
-<span class="hl-c">// h("????") === 40404  →  求 ????</span>`,
-    hint: [
-      '62^4 ≈ 1477 万 个候选，而值域只有 65521——由鸽笼原理，碰撞必然大量存在。写个循环爆破即可。',
-      '控制台四重循环遍历字符集，对每个组合调用 h()，命中 40404 就打印。1477 万次循环在现代浏览器里只需几秒。',
-      '已知一个解：Agvy（验证：h("Agvy") === 40404）。当然，亲手爆破出来的更酷。'
-    ],
-    hintCost: [10, 15, 25],
-    check(input) {
-      const s = input.trim();
-      if (!/^[A-Za-z0-9]{4}$/.test(s)) return false;
-      let x = 7;
-      for (const ch of s) x = (x * 131 + ch.charCodeAt(0)) % 65521;
-      return x === 40404;
-    },
-    successMsg: '碰撞命中。弱哈希在上，彩虹表在下。'
-  },
-  {
-    id: 'l5', zh: '只读频道', codename: 'CONSOLE ONLY', diff: 3, score: 100,
-    brief: '这个页面上<em>没有</em>答案。口令被拆成三段，通过一条隐匿信道投递——它只存在于浏览器控制台里。打开 F12，回到本关，仔细看输出。口令格式：<em>A-B-C</em>。',
-    code:
-`<span class="hl-c">// channel.js — 信道协议（接收端已注释）</span>
-<span class="hl-k">const</span> FRAGMENTS = [A, B, C];
-<span class="hl-c">// 投递方式：</span>
-<span class="hl-c">//   [1] 混在带样式的系统日志里</span>
-<span class="hl-c">//   [2] 藏在一次表格广播的第 ? 行</span>
-<span class="hl-c">//   [3] 延迟投递，随"遥测数据"到达</span>`,
-    hint: [
-      '激活本关后打开控制台（F12），刷新注意力：注意那些看起来最像"系统噪音"的带样式输出。',
-      'console.table 里的表格有一行数据不属于任何真实用户——它的备注列就是一段口令。',
-      '有些日志会迟到 8 秒，那是第三段。按 1-2-3 的顺序用 "-" 连接成 A-B-C。'
-    ],
-    hintCost: [10, 15, 25],
-    check(input) { return input.trim() === 'D3V-C0NS0LE-PR0'; },
-    successMsg: '隐匿信道监听完毕。你已经在用攻击者的眼睛看页面了。',
-    onActivate(log) {
-      if (typeof console === 'undefined') return;
-      const decoys = ['0xDEADBEEF', 'GUEST', 'NULL'];
-      console.log('%c[SYS] heartbeat %c' + decoys[Math.floor(Math.random() * decoys.length)], 'color:#3d6350', 'color:#5d8f70');
-      console.log('%c⚠ KERNEL CACHE: "D3V"  %c← 这不是错误。', 'color:#ffb340;font-size:18px;font-weight:bold', 'color:#3d6350');
-      console.table([
-        { user: 'admin',  note: 'session-ok' },
-        { user: 'ghost',  note: 'C0NS0LE' },
-        { user: 'tester', note: 'pending' }
-      ]);
-      console.log('[NET] scheduled telemetry in 8s ...');
-      setTimeout(() => {
-        console.log('%c[TELEMETRY] token-part = "PR0"', 'color:#39ff6e;font-size:16px');
-        console.log('%c[TELEMETRY] done. 3 fragments delivered.', 'color:#3d6350');
-      }, 8000);
-      if (typeof log === 'function') log('信道已激活：三条碎片将在控制台投递（其中一条迟到 8 秒）。', 'sys');
-    }
-  },
-  {
-    id: 'l6', zh: '莱默之门', codename: 'LEHMER GATE', diff: 4, score: 100,
-    brief: '最后一扇门。拦截到的不是字符串，而是一串<em>数字</em>。加密器使用莱默生成器（Lehmer RNG）产生掩码再逐字符异或。恢复出形如 <em>FLAG{...}</em> 的明文，推门而入。',
-    code:
-`<span class="hl-c">// gate.js — 加密端源码（解密端不存在）</span>
-<span class="hl-k">const</span> MUL = 48271, MOD = 2147483647;
-<span class="hl-k">let</span>   seed = 1337;
-
-<span class="hl-k">function</span> <span class="hl-f">nextMask</span>() {
-  seed = seed * MUL % MOD;      <span class="hl-c">// 莱默生成器</span>
-  <span class="hl-k">return</span> seed & 0x7f;
+function log(message, className = '') {
+  const row = node('div', 'log-line ' + className);
+  row.append(node('span', 'log-time', new Date().toTimeString().slice(0,8)), document.createTextNode(String(message)));
+  terminal.appendChild(row);
+  while (terminal.children.length > 220) terminal.firstChild.remove();
+  terminal.scrollTop = terminal.scrollHeight;
 }
-
-<span class="hl-c">// 拦截到的密文（逐字符编码）： </span>
-<span class="hl-k">const</span> TARGET = [<span class="hl-s">17,15,123,58,76,17,9,48,21,104,
-  16,23,66,11,112,100,106,31,18,122,44</span>];
-<span class="hl-c">// plain[i] = TARGET[i] XOR nextMask_i()</span>`,
-    hint: [
-      'XOR 是自逆运算：enc ^ mask = plain，plain ^ mask = enc。你不需要"解密算法"，只需要重放同样的掩码序列。',
-      '关键点：掩码顺序不能乱。从 seed=1337 开始，每处理一个字符前先推进一次生成器（21 个字符 = 推进 21 次），每次取 seed & 0x7f 作为掩码。',
-      '控制台：let s=1337;const T=[17,15,123,58,76,17,9,48,21,104,16,23,66,11,112,100,106,31,18,122,44];console.log(T.map(t=>{s=s*48271%2147483647;return String.fromCharCode(t^(s&0x7f))}).join(""))'
-    ],
-    hintCost: [10, 15, 25],
-    check(input) {
-      const T = [17,15,123,58,76,17,9,48,21,104,16,23,66,11,112,100,106,31,18,122,44];
-      let s = 1337;
-      const plain = T.map(t => {
-        s = s * 48271 % 2147483647;
-        return String.fromCharCode(t ^ (s & 0x7f));
-      }).join('');
-      return input.trim() === plain;
-    },
-    successMsg: '门开了。FLAG 已确认 ——你就是钥匙。'
-  }
-];
-
-/* RANKS */
-const RANKS = [
-  [0,   'SCR1PT K1DD1E'],
-  [100, 'R3VERS3R'],
-  [300, 'H4CK3R'],
-  [500, 'CR4CKM3 M4ST3R']
-];
-/*__LEVELS_END__*/
-</script>
-
-<script>
-/* ============ ENGINE (UI 层) ============ */
-const $ = sel => document.querySelector(sel);
-const STORE_KEY = 'crackme_v1_state';
-const SEEN_KEY  = 'crackme_v1_seen';
-const MUTE_KEY  = 'crackme_v1_mute';
-
-let state = loadState();
-let currentLevel = 0;
-let levelStartAt = {};   // id -> ts
-let sessionLogCount = 0;
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) {
-      const s = JSON.parse(raw);
-      if (s && s.done && typeof s.unlocked === 'number') return s;
-    }
-  } catch (e) {}
-  return { done: {}, unlocked: 1, mute: false };
-}
-function saveState() {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
-}
-
-/* ---------- sound (WebAudio) ---------- */
-let actx = null;
-function ac() {
-  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
-  return actx;
-}
-function beep(freq, dur = 0.07, type = 'square', vol = 0.05, delay = 0) {
-  if (state.mute) return;
-  const ctx = ac(); if (!ctx) return;
-  const o = ctx.createOscillator(), g = ctx.createGain();
-  o.type = type; o.frequency.value = freq;
-  g.gain.setValueAtTime(vol, ctx.currentTime + delay);
-  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + dur);
-  o.connect(g); g.connect(ctx.destination);
-  o.start(ctx.currentTime + delay); o.stop(ctx.currentTime + delay + dur + 0.02);
-}
-const sfx = {
-  key:   () => beep(880, 0.03, 'square', 0.02),
-  click: () => beep(660, 0.05, 'square', 0.04),
-  deny:  () => { beep(160, 0.12, 'sawtooth', 0.06); beep(120, 0.16, 'sawtooth', 0.05, 0.09); },
-  hint:  () => beep(440, 0.09, 'triangle', 0.05),
-  win:   () => { [523, 659, 784, 1046].forEach((f, i) => beep(f, 0.11, 'square', 0.05, i * 0.09)); }
-};
-
-/* ---------- terminal ---------- */
-const term = $('#term');
-function log(msg, cls = '') {
-  const d = document.createElement('div');
-  d.className = 't-line ' + cls;
-  const ts = new Date().toTimeString().slice(0, 8);
-  d.innerHTML = `<span class="tp">[${ts}]</span> ${msg}`;
-  term.appendChild(d);
-  while (term.children.length > 220) term.removeChild(term.firstChild);
-  term.scrollTop = term.scrollHeight;
-}
-function typeLog(msg, cls = '', speed = 12) {
-  return new Promise(res => {
-    const d = document.createElement('div');
-    d.className = 't-line ' + cls;
-    const ts = new Date().toTimeString().slice(0, 8);
-    d.innerHTML = `<span class="tp">[${ts}]</span> <span class="tx"></span>`;
-    term.appendChild(d);
-    const tx = d.querySelector('.tx');
-    let i = 0;
-    const t = setInterval(() => {
-      tx.textContent = msg.slice(0, ++i);
-      term.scrollTop = term.scrollHeight;
-      if (i >= msg.length) { clearInterval(t); res(d); }
+function typeLog(message, className = '', speed = 10) {
+  if (reducedMotion) { log(message, className); return Promise.resolve(); }
+  return new Promise(resolve => {
+    const row = node('div', 'log-line ' + className), text = node('span');
+    row.append(node('span','log-time',new Date().toTimeString().slice(0,8)),text);
+    terminal.appendChild(row);
+    while (terminal.children.length > 220) terminal.firstChild.remove();
+    let pos = 0;
+    const timer = setInterval(() => {
+      text.textContent = message.slice(0, ++pos); terminal.scrollTop = terminal.scrollHeight;
+      if (pos >= message.length || !row.isConnected) { clearInterval(timer); resolve(); }
     }, speed);
   });
 }
-
-/* ---------- toast / stamp ---------- */
-function toast(msg, amber = false) {
-  const d = document.createElement('div');
-  d.className = 'toast' + (amber ? ' amber' : '');
-  d.textContent = msg;
-  $('#toasts').appendChild(d);
-  setTimeout(() => d.remove(), 4200);
+function toast(message, amber = false) {
+  const el = node('div', 'toast' + (amber ? ' amber' : ''), message);
+  const box = q('#toasts'); box.appendChild(el);
+  while (box.children.length > 4) box.firstChild.remove();
+  setTimeout(() => el.remove(), 4200);
 }
-function showStamp(text, red = false) {
-  const s = $('#stamp'), t = $('#stampText');
-  t.textContent = text;
-  t.className = red ? 'red' : '';
-  s.classList.remove('fade');
-  s.style.display = 'flex';
-  void s.offsetWidth;
-  if (!red) s.classList.add('fade');
+let actx;
+function beep(freq, duration = .07, type = 'square', volume = .035, delay = 0) {
+  if (state.mute) return;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume().catch(() => {});
+    const oscillator = actx.createOscillator(), gain = actx.createGain();
+    oscillator.type = type; oscillator.frequency.value = freq;
+    gain.gain.setValueAtTime(volume, actx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + delay + duration);
+    oscillator.connect(gain); gain.connect(actx.destination);
+    oscillator.start(actx.currentTime + delay); oscillator.stop(actx.currentTime + delay + duration + .02);
+    oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+  } catch {}
 }
-function hideStamp() { $('#stamp').style.display = 'none'; }
-
-/* ---------- scoring ---------- */
-function totalScore() {
-  let s = 0;
-  for (const lv of LEVELS) {
-    const d = state.done[lv.id];
-    if (d) s += lv.score - d.hintCost;
-  }
-  return Math.max(0, s);
-}
-function rankOf(score) {
-  let r = RANKS[0][1];
-  for (const [th, name] of RANKS) if (score >= th) r = name;
-  return r;
-}
-function starsOf(hints) { return hints === 0 ? 3 : hints <= 1 ? 2 : 1; }
-
-/* ---------- level list ---------- */
+const sfx = {
+  click:()=>beep(660,.045), key:()=>beep(880,.025,'triangle',.012),
+  deny:()=>{beep(160,.12,'sawtooth');beep(120,.15,'sawtooth',.035,.09);},
+  hint:()=>beep(440,.09,'triangle'),
+  win:()=>[523,659,784,1046].forEach((f,i)=>beep(f,.11,'triangle',.04,i*.09))
+};
 function renderList() {
-  const list = $('#lvList');
-  list.innerHTML = '';
-  LEVELS.forEach((lv, i) => {
-    const unlocked = i < state.unlocked;
-    const done = state.done[lv.id];
-    const el = document.createElement('div');
-    el.className = 'lv-item' + (i === currentLevel ? ' active' : '') + (unlocked ? '' : ' locked') + (done ? ' done' : '');
-    const stars = done ? '★'.repeat(done.stars) + '☆'.repeat(3 - done.stars) : '';
-    el.innerHTML = `
-      <div class="lv-idx">${done ? '✓' : pad(i + 1, 2)}</div>
-      <div class="lv-meta">
-        <div class="lv-name">${lv.zh} · ${lv.codename}</div>
-        <div class="lv-sub">${unlocked ? (done ? '已破解 ' + done.attempts + ' 次尝试' : '难度 ' + '▮'.repeat(lv.diff)) : 'LOCKED'}</div>
-      </div>
-      <div class="lv-stars">${unlocked ? stars : ''}</div>
-      ${unlocked ? '' : '<div class="lv-lock">🔒</div>'}`;
-    if (unlocked) {
-      el.addEventListener('click', () => { sfx.click(); openLevel(i); });
-    }
-    list.appendChild(el);
+  const list = q('#missionList'); list.replaceChildren();
+  LEVELS.forEach((lv,i) => {
+    const d = state.done[lv.id], available = i < unlockedCount();
+    const el = node('button','mission' + (i===current ? ' active' : '') + (d ? ' done' : ''));
+    el.type = 'button'; el.disabled = !available;
+    el.setAttribute('aria-label', '第' + (i+1) + '关：' + lv.zh + (available ? '' : '，未解锁'));
+    if(i===current) el.setAttribute('aria-current','step');
+    const copy = node('span','mission-copy');
+    copy.append(node('span','mission-name',lv.zh),node('span','mission-code',lv.codename),node('span','mission-meta',d ? '★'.repeat(d.stars)+'☆'.repeat(3-d.stars) : 'DIFF '+'▮'.repeat(lv.diff)));
+    el.append(node('span','mission-index',d?'✓':pad(i+1,2)),copy);
+    if(!available) el.append(node('span','mission-lock','LOCK'));
+    el.addEventListener('click',()=>{sfx.click();openLevel(i);}); list.appendChild(el);
   });
-  $('#hudScore').textContent = totalScore();
-  $('#hudRank').textContent = rankOf(totalScore());
-  $('#hudProg').textContent = Object.keys(state.done).length + '/' + LEVELS.length;
+  const score = state.score, completed = state.completed;
+  q('#hudScore').textContent = String(score); q('#hudRank').textContent = state.rank; q('#hudProgress').textContent = pad(completed,2);
+  q('#progressTrack').replaceChildren(...LEVELS.map(lv=>node('span','progress-segment'+(state.done[lv.id]?' on':''))));
 }
-
-/* ---------- challenge panel ---------- */
-function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-function openLevel(i) {
-  currentLevel = i;
-  hideStamp();
-  const lv = LEVELS[i];
-  const done = state.done[lv.id];
-  const body = $('#chBody');
-
-  let html = `
-    <div class="ch-head">
-      <div class="ch-num">${pad(i + 1, 2)}</div>
-      <div>
-        <div class="ch-title">${lv.zh}</div>
-        <div style="color:var(--muted);letter-spacing:2px;font-size:12px">${lv.codename}</div>
-      </div>
-      <div class="spacer"></div>
-      <div class="ch-tag ${lv.diff >= 4 ? 'boss' : lv.diff >= 3 ? 'hard' : ''}">${'DIFF ' + lv.diff} ${'▮'.repeat(lv.diff)}</div>
-    </div>
-    <div class="ch-brief">${lv.brief}</div>
-    <div class="ch-code">${lv.code}</div>`;
-
-  if (done) {
-    html += `
-      <div class="done-banner">
-        <span>✓ CRACKED — ${escHtml(lv.successMsg)}</span>
-        <span class="chip">★ ${done.stars}/3 · 尝试 ${done.attempts} · 提示扣 ${done.hintCost}</span>
-        <button class="btn ghost" id="btnReplay">重新挑战</button>
-      </div>
-      <div class="ch-input-row">
-        <input class="ch-input" id="chInput" placeholder="${done ? '已破解 — 可输入任意内容' : '输入你的答案…'}" disabled>
-        <button class="btn" id="btnSubmit" disabled>提交</button>
-      </div>`;
+function cancelActivation() { activeChannel=null; if(activateTimer!==null){clearTimeout(activateTimer);activateTimer=null;} }
+function activateConsole(lv) {
+  // Preserve the three original console fragments and their eight-second delay.
+  if(lv.id!=='l5' || state.done[lv.id] || activeChannel==='l5') return; activeChannel='l5';
+  const decoys=['0xDEADBEEF','GUEST','NULL'];
+  console.log('%c[SYS] heartbeat %c'+decoys[Math.floor(Math.random()*decoys.length)],'color:#827c90','color:#a19bae');
+  console.log('%c⚠ KERNEL CACHE: "D3V"  %c← 这不是错误。','color:#ffb75e;font-size:18px;font-weight:bold','color:#827c90');
+  console.table([{user:'admin',note:'session-ok'},{user:'ghost',note:'C0NS0LE'},{user:'tester',note:'pending'}]);
+  console.log('[NET] scheduled telemetry in 8s ...');
+  activateTimer=setTimeout(()=>{activateTimer=null;console.log('%c[TELEMETRY] token-part = "PR0"','color:#b99aff;font-size:16px');console.log('[TELEMETRY] done. 3 fragments delivered.');},8000);
+  log('信道已激活：三条碎片将在控制台投递（其中一条迟到 8 秒）。','sys');
+}
+function openLevel(index, focus = true) {
+  // Check access in the action, not only in the navigation appearance.
+  if(!Number.isInteger(index)||index<0||index>=LEVELS.length||index>=unlockedCount()) { toast('该任务尚未解锁。',true); return false; }
+  if(current!==index)cancelActivation(); current=index; q('#stamp').classList.add('hidden');
+  const lv=LEVELS[index], d=state.done[lv.id], body=q('#challengeBody');
+  const top=node('div','challenge-top');
+  top.append(node('span','path','~/missions/'+pad(index+1,2)+' / '+lv.id),node('span','difficulty','DIFF '+lv.diff+' / '+'▮'.repeat(lv.diff)));
+  const inner=node('div','challenge-inner'), heading=node('div','mission-heading'), title=node('div');
+  title.append(node('div','eyebrow',lv.codename),node('h2','',lv.zh)); heading.append(title,node('span','large-index',pad(index+1,2)));
+  const brief=node('p','brief');richText(brief,lv.brief);
+  const source=node('section','source'), sourceBar=node('div','source-bar'), pre=node('pre');
+  sourceBar.append(node('span','','SOURCE / INTERCEPTED'),node('span','','JavaScript'),node('span','','READ ONLY'));richText(pre,lv.code,true);source.append(sourceBar,pre);
+  inner.append(heading,brief,source);
+  if(d){
+    const banner=node('div','done-banner');
+    banner.append(node('strong','','✓ CRACKED'),node('span','done-detail','★ '+d.stars+'/3 · 尝试 '+d.attempts+' · 提示扣 '+d.hintCost+' 分'),button('重新挑战 ↻','',()=>replay(lv.id)));
+    inner.append(banner,node('p','feedback good',lv.successMsg));
+    const label=node('div','answer-label','ANSWER / VERIFIED'), row=node('div','answer-row'), shell=node('div','input-shell'), input=node('input','answer-input');
+    input.id='answerInput';input.disabled=true;input.placeholder='已破解 — 重新挑战可再次提交';input.setAttribute('aria-label','已破解的答案输入框');shell.append(node('span','prompt-symbol','>_'),input);
+    const submitButton=button('已验证 ✓','primary',submit);submitButton.disabled=true;row.append(shell,submitButton);inner.append(label,row);
+    if(LEVELS.every(item=>state.done[item.id]))inner.append(node('p','complete-note','ALL MISSIONS COMPLETE / 你就是钥匙。'));
   } else {
-    html += `
-      <div class="ch-input-row">
-        <input class="ch-input" id="chInput" placeholder="输入你的答案 / serial / flag…" autocomplete="off" spellcheck="false">
-        <button class="btn" id="btnSubmit">提交 ▸</button>
-        <button class="btn warn" id="btnHint">提示</button>
-      </div>
-      <div class="feedback" id="chFeedback"></div>
-      <div class="hints" id="chHints"></div>`;
+    const label=node('label','answer-label','ANSWER / KEY INPUT');label.htmlFor='answerInput';
+    const row=node('div','answer-row'), shell=node('div','input-shell'), input=node('input','answer-input');
+    input.id='answerInput';input.type='text';input.placeholder='输入你的答案 / serial / flag…';input.autocomplete='off';input.spellcheck=false;input.maxLength=2048;
+    input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.isComposing){event.preventDefault();submit();}});input.addEventListener('input',sfx.key);
+    shell.append(node('span','prompt-symbol','>_'),input);const submitButton=button('提交口令 →','primary',submit);submitButton.id='submitButton';row.append(shell,submitButton);
+    const feedback=node('div','feedback');feedback.id='feedback';feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+    const hints=node('div');hints.id='hintBox';
+    const tools=node('div','challenge-tools'), hintButton=button('解封提示 / −'+(lv.hintCost[state.hints[lv.id]]||0)+' PTS','accent',giveHint);
+    hintButton.id='hintButton';if(state.hints[lv.id]>=lv.hintCount){hintButton.disabled=true;hintButton.textContent='提示已全部解封';}
+    const attempts=node('span','attempt-info','ATTEMPTS / '+state.attempts[lv.id]);attempts.id='attemptInfo';tools.append(hintButton,attempts);
+    inner.append(label,row,feedback,hints,tools);
+    if(!startAt[lv.id])startAt[lv.id]=Date.now();
   }
-  body.innerHTML = html;
+  body.replaceChildren(top,inner);
+  if(!d)for(let k=0;k<state.hints[lv.id];k++)addHintLine(k);
+  renderList();activateConsole(lv);syncControls();
+  if(focus&&!d&&!introOpen())q('#answerInput').focus({preventScroll:true});
+  return true;
+}
+function addHintLine(index) {
+  const lv=LEVELS[current], box=q('#hintBox');
+  if(!box||!Number.isInteger(index)||index<0||index>=lv.hintCount)return;
+  const el=node('div','hint-block');el.append(node('b','','HINT '+(index+1)+' / −'+lv.hintCost[index]+' PTS'));richText(el,lv.hint[index]);box.appendChild(el);
+}
 
-  const input = $('#chInput');
-  if (input && !done) {
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
-    input.addEventListener('input', sfx.key);
-    if (!levelStartAt[lv.id]) levelStartAt[lv.id] = Date.now();
-  }
-  const btnSub = $('#btnSubmit');
-  if (btnSub) btnSub.addEventListener('click', submit);
-  const btnHint = $('#btnHint');
-  if (btnHint) btnHint.addEventListener('click', giveHint);
-  const btnReplay = $('#btnReplay');
-  if (btnReplay) btnReplay.addEventListener('click', () => {
-    if (confirm('重新挑战将抹除本关成绩（含星级），确定？')) {
-      delete state.done[lv.id];
-      saveState(); renderList(); openLevel(i);
-      log('已重置本关成绩，重新挑战。', 'sys');
+async function giveHint(){
+  if(busy||!ready||current>=unlockedCount()||state.done[LEVELS[current].id])return;
+  const index=current,lv=LEVELS[index],used=state.hints[lv.id];
+  if(used>=lv.hintCount){toast('没有更多提示了。剩下的靠你自己。',true);return;}
+  try{
+    await request('/api/hint',{level:lv.id});sfx.hint();
+    if(current===index){addHintLine(used);const btn=q('#hintButton');btn.disabled=state.hints[lv.id]>=lv.hintCount;btn.textContent=btn.disabled?'提示已全部解封':'解封提示 / −'+lv.hintCost[state.hints[lv.id]]+' PTS';}
+    log('HINT '+(used+1)+' 已解封 (−'+lv.hintCost[used]+' 分)。','sys');typeLog('hint_channel::leak() → level_'+(index+1)+' …','dim',8);
+  }catch(error){actionError(error);}
+}
+async function submit(){
+  if(busy||!ready||current>=unlockedCount())return;
+  const index=current,lv=LEVELS[index],input=q('#answerInput'),feedback=q('#feedback');
+  if(!input||input.disabled||state.done[lv.id]||!feedback)return;
+  const value=input.value;
+  if(!value.trim()){feedback.className='feedback info';feedback.textContent='>> 输入为空。连空串都敢提交，胆子不小。';sfx.deny();return;}
+  if(value.length>2048){feedback.className='feedback bad';feedback.textContent='输入过长，请检查口令。';return;}
+  try{
+    const result=await request('/api/submit',{level:lv.id,answer:value});
+    if(result.passed){
+      const completed=state.done[lv.id];sfx.win();cancelActivation();
+      if(current===index){input.disabled=true;q('#submitButton').disabled=true;q('#hintButton').disabled=true;feedback.className='feedback good';feedback.textContent='>> '+lv.successMsg;q('#stamp').classList.remove('hidden');}
+      const pop=node('div','scorepop','+'+completed.awarded);document.body.appendChild(pop);setTimeout(()=>pop.remove(),1400);
+      const seconds=Math.max(0,Math.round((Date.now()-(startAt[lv.id]||Date.now()))/1000));
+      typeLog('crack_target(level_'+pad(index+1,2)+') :: SERVER VERIFIED','ok',14);
+      log('ACCESS GRANTED — '+lv.zh+' 已破解 (+'+completed.awarded+' 分, '+'★'.repeat(completed.stars)+', 用时 '+seconds+'s)','ok');
+      if(index+1<LEVELS.length)log('新关卡已解锁: '+LEVELS[index+1].zh+' · '+LEVELS[index+1].codename,'sys');
+      if(state.completed===LEVELS.length){typeLog('=== ALL MISSIONS COMPLETE === 系统向你敬礼。','ok',20);toast('全部 6 关破解完成！你是 CR4CKM3 M4ST3R。',true);}
+      renderList();clearTimeout(popTimer);popTimer=setTimeout(()=>{if(current===index){q('#stamp').classList.add('hidden');openLevel(index,false);}},1400);
+    }else{
+      sfx.deny();const attempts=state.attempts[lv.id];
+      if(current===index){input.classList.remove('pulse');void input.offsetWidth;input.classList.add('pulse');const mocks=['ACCESS DENIED — 钥匙不对，门纹丝不动。','ACCESS DENIED — 锁芯发出一声冷笑。','ACCESS DENIED — 门后传来翻白眼的声音。','ACCESS DENIED — 再想想，答案就在你眼前。'];feedback.className='feedback bad';feedback.textContent='>> '+mocks[Math.min(attempts-1,mocks.length-1)]+' (第 '+attempts+' 次尝试)';q('#attemptInfo').textContent='ATTEMPTS / '+attempts;}
+      log('deny(level_'+pad(index+1,2)+', "'+value.slice(0,24)+(value.length>24?'…':'')+'") → RET '+attempts,'err');
     }
-  });
-
-  // render already-revealed hints
-  if (!done) {
-    const rec = state.done[lv.id];
-    // hints stored transiently per level in state.hints[lv.id]
-    const revealed = (state.hints && state.hints[lv.id]) || 0;
-    for (let k = 0; k < revealed; k++) addHintLine(k, true);
-  }
-
-  // side effects
-  if (lv.onActivate && !done) {
-    try { lv.onActivate((m, c) => log(m, c || '')); } catch (e) {}
-  }
-  renderList();
-  $('#chPanelTitle').innerHTML = `CHALLENGE ${pad(i + 1, 2)}/${pad(LEVELS.length, 2)} <small>${lv.codename}</small>`;
+  }catch(error){actionError(error);}
 }
-
-function addHintLine(idx, silent = false) {
-  const lv = LEVELS[currentLevel];
-  const box = $('#chHints');
-  if (!box) return;
-  const d = document.createElement('div');
-  d.className = 'hint-line';
-  d.innerHTML = `<b>HINT ${idx + 1} (−${lv.hintCost[idx]}分):</b> ${lv.hint[idx]}`;
-  box.appendChild(d);
-  if (!silent) sfx.hint();
+async function replay(id){
+  const index=LEVELS.findIndex(lv=>lv.id===id);
+  if(busy||index<0||index>=unlockedCount()||!state.done[id])return;
+  if(!confirm('重新挑战将抹除本关成绩（含星级），确定？'))return;
+  try{await request('/api/replay',{level:id});startAt[id]=Date.now();openLevel(index);log('已重置本关成绩，重新挑战。','sys');}catch(error){actionError(error);}
 }
-function giveHint() {
-  const lv = LEVELS[currentLevel];
-  if (state.done[lv.id]) return;
-  if (!state.hints) state.hints = {};
-  const revealed = state.hints[lv.id] || 0;
-  if (revealed >= lv.hint.length) { toast('没有更多提示了。剩下的靠你自己。', true); return; }
-  state.hints[lv.id] = revealed + 1;
-  saveState();
-  addHintLine(revealed);
-  log(`HINT ${revealed + 1} 已解封 (−${lv.hintCost[revealed]} 分)。`, 'sys');
-  typeLog(`hint_channel::leak() → level_${currentLevel + 1} …`, 'dim', 8);
+function introOpen(){return !q('#intro').classList.contains('hidden');}
+async function bootLog(){
+  if(booted)return;booted=true;
+  await typeLog('connecting crackme.local ...','dim',8);await typeLog('mounting /dev/challenges ... 6 targets found','dim',6);
+  await typeLog('intel: 题目在页面，判题与成绩由服务验证。','sys',12);log('READY. 选择任务，开始逆向。','ok');
 }
-
-function submit() {
-  const lv = LEVELS[currentLevel];
-  const input = $('#chInput');
-  const fb = $('#chFeedback');
-  if (!input || input.disabled) return;
-  const val = input.value;
-  if (!val.trim()) { fb.className = 'feedback info'; fb.textContent = '>> 输入为空。连空串都敢提交，胆子不小。'; sfx.deny(); return; }
-
-  let ok = false;
-  try { ok = !!lv.check(val); } catch (e) { ok = false; }
-
-  if (ok) {
-    // score
-    const hintUsed = (state.hints && state.hints[lv.id]) || 0;
-    const hintCost = lv.hintCost.slice(0, hintUsed).reduce((a, b) => a + b, 0);
-    const attempts = (state._attempts && state._attempts[lv.id] || 0) + 1;
-    state.done[lv.id] = { stars: starsOf(hintUsed), attempts, hintCost, ts: Date.now() };
-    state.unlocked = Math.max(state.unlocked, Math.min(currentLevel + 2, LEVELS.length));
-    const secs = levelStartAt[lv.id] ? Math.round((Date.now() - levelStartAt[lv.id]) / 1000) : 0;
-    saveState();
-    sfx.win();
-    showStamp('ACCESS GRANTED');
-    input.disabled = true; $('#btnSubmit').disabled = true;
-    fb.className = 'feedback good';
-    fb.textContent = '>> ' + lv.successMsg;
-    // score pop
-    const pop = document.createElement('div');
-    pop.className = 'scorepop';
-    pop.textContent = '+' + (lv.score - hintCost);
-    document.body.appendChild(pop);
-    setTimeout(() => pop.remove(), 1500);
-
-    typeLog(`crack_target(level_${pad(currentLevel + 1, 2)}) :: SIGIL VERIFIED`, 'ok', 14);
-    log(`ACCESS GRANTED — ${lv.zh} 已破解 (+${lv.score - hintCost} 分, ${starsOf(hintUsed) && '★'.repeat(starsOf(hintUsed))} , 用时 ${secs}s)`, 'ok');
-    if (currentLevel + 1 < LEVELS.length) {
-      log(`新关卡已解锁: ${LEVELS[currentLevel + 1].zh} · ${LEVELS[currentLevel + 1].codename}`, 'sys');
-    } else {
-      typeLog('=== ALL MISSIONS COMPLETE === 系统向你敬礼。', 'ok', 20);
-      toast('全部 6 关破解完成！你是 CR4CKM3 M4ST3R。', true);
-    }
-    setTimeout(() => { renderList(); openLevel(currentLevel); }, 1400);
-  } else {
-    state._attempts = state._attempts || {};
-    state._attempts[lv.id] = (state._attempts[lv.id] || 0) + 1;
-    saveState();
-    sfx.deny();
-    input.classList.remove('denied'); void input.offsetWidth; input.classList.add('denied');
-    const n = state._attempts[lv.id];
-    const mocks = [
-      'ACCESS DENIED — 钥匙不对，门纹丝不动。',
-      'ACCESS DENIED — 锁芯发出一声冷笑。',
-      'ACCESS DENIED — 门后传来翻白眼的声音。',
-      'ACCESS DENIED — 再想想，答案就在你眼前。'
-    ];
-    fb.className = 'feedback bad';
-    fb.textContent = `>> ${mocks[Math.min(n - 1, mocks.length - 1)]} (第 ${n} 次尝试)`;
-    log(`deny(level_${pad(currentLevel + 1, 2)}, "${escHtml(val.slice(0, 24))}${val.length > 24 ? '…' : ''}") → RET ${n}`, 'err');
-  }
+function updateMute(){q('#muteButton').textContent=state.mute?'SFX / OFF':'SFX / ON';q('#muteButton').setAttribute('aria-pressed',String(state.mute));}
+q('#muteButton').addEventListener('click',async()=>{if(busy||!ready)return;try{await request('/api/preferences',{mute:!state.mute});if(!state.mute)sfx.click();}catch(error){actionError(error);}});
+q('#resetButton').addEventListener('click',async()=>{
+  if(busy||!ready||!confirm('确定要清空全部进度、分数与星级吗？此操作不可撤销。'))return;
+  try{await request('/api/reset',{});cancelActivation();clearTimeout(popTimer);startAt={};openLevel(0);log('系统已重置。欢迎回来，菜鸟。','err');toast('进度已重置。',true);}catch(error){actionError(error);}
+});
+q('#startButton').addEventListener('click',async()=>{
+  if(busy||!ready)return;
+  try{await request('/api/start',{});q('#intro').classList.add('hidden');q('.shell').inert=false;sfx.win();bootLog();const input=q('#answerInput');if(input&&!input.disabled)input.focus();}catch(error){actionError(error);}
+});
+q('#brand').addEventListener('click',()=>toast('CRACK.ME / 6 missions / 600 pts / server verified.',true));
+q('#intro').addEventListener('keydown',event=>{if(event.key==='Tab'){event.preventDefault();q('#startButton').focus();}});
+const sequence=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];let sequenceIndex=0;
+window.addEventListener('keydown',event=>{sequenceIndex=event.key===sequence[sequenceIndex]?sequenceIndex+1:event.key===sequence[0]?1:0;if(sequenceIndex===sequence.length){sequenceIndex=0;toast('↑↑↓↓←→←→BA — GREETINGS, FELLOW AGENT.',true);log('konami_accepted() → 洪流般的敬意已送达。','sys');sfx.win();}});
+window.addEventListener('pagehide',cancelActivation);
+function connectionProblem(error){
+  q('#intro').classList.add('hidden');q('.shell').inert=false;ready=false;syncControls();
+  const panel=node('div','challenge-inner');panel.append(node('div','eyebrow','SERVICE / DISCONNECTED'),node('h2','','请连接判题服务'),node('p','brief',error.message));
+  const info=node('p','brief','在此文件所在目录运行 python -B crackme_server.py，然后通过下面的服务地址打开网站。');
+  const link=node('a','btn primary','打开 CRACK.ME →');link.href=location.protocol==='file:'?'http://127.0.0.1:8765/ghostline.html':location.origin+'/ghostline.html';
+  panel.append(info,link);q('#challengeBody').replaceChildren(panel);q('#storageStatus').textContent='PROGRESS / SERVICE REQUIRED';log('没有连接判题服务，成绩功能未启用。','err');
 }
-
-/* ---------- matrix rain ---------- */
-(function matrixRain() {
-  const cv = $('#matrix'), cx = cv.getContext('2d');
-  let W, H, drops, cols;
-  const FS = 15;
-  const CHARS = 'アイウエオカキクケコサシスセソ0123456789ABCDEF<>/\\{}[]$#%&';
-  function resize() {
-    W = cv.width = window.innerWidth; H = cv.height = window.innerHeight;
-    cols = Math.ceil(W / FS);
-    drops = Array.from({ length: cols }, () => Math.random() * H / FS);
-  }
-  window.addEventListener('resize', resize); resize();
-  let running = true;
-  document.addEventListener('visibilitychange', () => { running = !document.hidden; });
-  setInterval(() => {
-    if (!running) return;
-    cx.fillStyle = 'rgba(4,7,10,0.09)';
-    cx.fillRect(0, 0, W, H);
-    cx.font = FS + 'px "Share Tech Mono", monospace';
-    for (let i = 0; i < cols; i++) {
-      const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
-      const x = i * FS, y = drops[i] * FS;
-      cx.fillStyle = Math.random() < 0.06 ? '#bfffd0' : '#1d7a3f';
-      cx.fillText(ch, x, y);
-      if (y > H && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
-    }
-  }, 55);
+async function init(){
+  q('.shell').inert=true;syncControls();
+  if(location.protocol==='file:'){connectionProblem(new Error('直接打开 HTML 无法验证成绩。请先启动随附的本地服务。'));return;}
+  try{
+    await request('/api/session');current=LEVELS.findIndex(lv=>!state.done[lv.id]);if(current<0)current=LEVELS.length-1;current=Math.min(current,unlockedCount()-1);
+    openLevel(current,false);log('session init — judging service connected.','dim');
+    if(state.seen){q('#intro').classList.add('hidden');q('.shell').inert=false;bootLog();}
+    else{q('#startButton').focus();const text='agent@crackme:~$ establish --verified';let pos=0;if(reducedMotion)q('#introType').textContent=text;else{const timer=setInterval(()=>{q('#introType').textContent=text.slice(0,++pos);if(pos>=text.length||!introOpen())clearInterval(timer);},28);}}
+  }catch(error){connectionProblem(error);}
+}
+init();
 })();
 
-/* ---------- konami easter egg ---------- */
-(function konami() {
-  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-  let idx = 0;
-  window.addEventListener('keydown', e => {
-    idx = (e.key === seq[idx]) ? idx + 1 : (e.key === seq[0] ? 1 : 0);
-    if (idx === seq.length) {
-      idx = 0;
-      toast('↑↑↓↓←→←→BA — 彩蛋：GREETINGS, FELLOW AGENT.', true);
-      log('konami_accepted() → 洪流般的敬意已送达。', 'sys');
-      sfx.win();
-    }
-  });
-})();
-
-/* ---------- boot ---------- */
-$('#btnMute').addEventListener('click', () => {
-  state.mute = !state.mute; saveState();
-  $('#btnMute').textContent = state.mute ? '♪ SFX:OFF' : '♪ SFX:ON';
-  if (!state.mute) sfx.click();
-});
-$('#btnReset').addEventListener('click', () => {
-  if (confirm('确定要清空全部进度、分数与星级吗？此操作不可撤销。')) {
-    state = { done: {}, unlocked: 1, mute: state.mute };
-    saveState();
-    currentLevel = 0; levelStartAt = {};
-    renderList(); openLevel(0);
-    log('系统已重置。欢迎回来，菜鸟。', 'err');
-    toast('进度已重置。', true);
-  }
-});
-$('#btnStart').addEventListener('click', () => {
-  $('#intro').classList.add('hidden');
-  try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
-  sfx.win();
-  bootLog();
-});
-$('#logo').addEventListener('click', () => {
-  toast('CRACK.ME v2.7 — 6 missions / 600 pts / offline.', true);
-});
-
-async function bootLog() {
-  await typeLog('booting crackme.sys v2.7 ...', 'dim', 10);
-  await typeLog('mounting /dev/challenges ... 6 targets found', 'dim', 6);
-  await typeLog('intel: 所有逻辑都在前端。源码即战场。', 'sys', 14);
-  log('READY. 选择左侧关卡开始入侵。', 'ok');
-}
-
-(function init() {
-  $('#btnMute').textContent = state.mute ? '♪ SFX:OFF' : '♪ SFX:ON';
-  // find first uncompleted level
-  currentLevel = 0;
-  for (let i = 0; i < LEVELS.length; i++) {
-    if (!state.done[LEVELS[i].id]) { currentLevel = i; break; }
-    if (i === LEVELS.length - 1) currentLevel = i;
-  }
-  state.hints = state.hints || {};
-  renderList();
-  openLevel(currentLevel);
-  log('session init — user agent connected.', 'dim');
-
-  const seen = (() => { try { return localStorage.getItem(SEEN_KEY); } catch (e) { return null; } })();
-  if (seen) { $('#intro').classList.add('hidden'); bootLog(); }
-  else {
-    // intro typing
-    const el = $('#introType');
-    const msg = 'root@crackme:~$ ./connect --agent=anonymous';
-    let i = 0;
-    const t = setInterval(() => {
-      el.textContent = msg.slice(0, ++i);
-      if (i >= msg.length) clearInterval(t);
-    }, 34);
-  }
-})();
 </script>
 </body>
 </html>
